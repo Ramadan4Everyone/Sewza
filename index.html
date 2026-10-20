@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+  <meta content="SEWZA — the simple digital measurement book for modern tailors." name="description"/>
+  <title>
+   SEWZA — Digital Measurement Book
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link href="style.css" rel="stylesheet"/>
+  <link rel="preload" as="image" href="sewza-mark.png"/>
+  <link rel="preload" as="image" href="sewza-wordmark.png"/>
+  <link rel="manifest" href="manifest.webmanifest"/>
+  <meta name="theme-color" content="#0f6b52"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="SEWZA"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+  <script src="migrate.js"></script>
+  <script>
+   /* Capture the browser's install offer as early as possible (install.js shows the prompt). */
+   window.__sewzaInstallPrompt = null;
+   window.addEventListener('beforeinstallprompt', function (e) {
+     e.preventDefault();
+     window.__sewzaInstallPrompt = e;
+     try { window.dispatchEvent(new Event('sewza:installready')); } catch (err) {}
+   });
+  </script>
+ </head>
+ <body data-theme="sewza" class="booting">
+  <noscript><p style="padding:24px;font-family:sans-serif">SEWZA needs JavaScript to run. Please enable JavaScript in your browser and reload.</p></noscript>
+  <div class="app-boot" id="appBoot" role="status" aria-live="polite" aria-label="Opening SEWZA">
+   <div class="sz-bg" aria-hidden="true"><i class="sz-weave"></i><i class="sz-halo"></i><i class="sz-glow"></i></div>
+   <div class="sz-dust" aria-hidden="true"><i style="--x:6%;--s:5px;--d:11.7s;--t:-4.7s;--w:-18px"></i><i style="--x:13%;--s:3px;--d:11.1s;--t:-1.1s;--w:-24px"></i><i style="--x:21%;--s:3px;--d:11.5s;--t:-2.6s;--w:-18px"></i><i style="--x:29%;--s:6px;--d:9.1s;--t:-2.9s;--w:-24px"></i><i style="--x:37%;--s:6px;--d:7.3s;--t:-6.8s;--w:-10px"></i><i style="--x:45%;--s:3px;--d:10.1s;--t:-11.4s;--w:-24px"></i><i style="--x:53%;--s:4px;--d:9.0s;--t:-11.7s;--w:-18px"></i><i style="--x:61%;--s:4px;--d:11.3s;--t:-3.5s;--w:-10px"></i><i style="--x:69%;--s:4px;--d:7.6s;--t:-3.7s;--w:16px"></i><i style="--x:76%;--s:4px;--d:7.5s;--t:-6.9s;--w:-10px"></i><i style="--x:83%;--s:5px;--d:7.5s;--t:-8.5s;--w:-24px"></i><i style="--x:91%;--s:3px;--d:10.1s;--t:-6.0s;--w:-24px"></i><i style="--x:17%;--s:6px;--d:10.9s;--t:-5.6s;--w:20px"></i><i style="--x:49%;--s:5px;--d:8.5s;--t:-9.5s;--w:16px"></i><i style="--x:72%;--s:5px;--d:8.2s;--t:-6.9s;--w:-24px"></i><i style="--x:95%;--s:6px;--d:11.4s;--t:-8.8s;--w:12px"></i></div>
+   <div class="sz-stage">
+    <div class="sz-mark-box">
+     <div class="sz-ring" aria-hidden="true">
+      <svg viewBox="0 0 200 200" focusable="false">
+       <defs>
+        <linearGradient id="szGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a0"/><stop offset=".5" stop-color="#e0a82e"/><stop offset="1" stop-color="#b8821a"/></linearGradient>
+        <mask id="szRingMask" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><circle class="sz-ring-draw" cx="100" cy="100" r="94" fill="none" stroke="#fff" stroke-width="10" pathLength="100"/></mask>
+       </defs>
+       <circle cx="100" cy="100" r="94" fill="none" stroke="rgba(224,168,46,.18)" stroke-width="1"/>
+       <g mask="url(#szRingMask)"><circle cx="100" cy="100" r="94" fill="none" stroke="url(#szGold)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="7 6"/></g>
+      </svg>
+     </div>
+     <div class="sz-orbit" aria-hidden="true"><i></i></div>
+     <i class="sz-burst" aria-hidden="true"></i>
+     <span class="sz-fx sz-fx-mark"><img class="sz-mark" src="sewza-mark.png" alt="SEWZA" width="512" height="512" decoding="async"/></span>
+     <i class="sz-shine sz-shine-mark" aria-hidden="true"></i>
+     <i class="sz-spark s1" aria-hidden="true"></i><i class="sz-spark s2" aria-hidden="true"></i><i class="sz-spark s3" aria-hidden="true"></i>
+    </div>
+    <div class="sz-word-box">
+     <span class="sz-fx sz-fx-word"><img class="sz-word" src="sewza-wordmark.png" alt="" width="655" height="231" decoding="async"/></span>
+     <i class="sz-shine sz-shine-word" aria-hidden="true"></i>
+    </div>
+    <div class="sz-stitch" aria-hidden="true">
+     <svg class="sz-stitch-base" viewBox="0 0 300 24" preserveAspectRatio="none" focusable="false"><line x1="3" y1="12" x2="297" y2="12" stroke="rgba(14,90,59,.22)" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 6"/></svg>
+     <svg class="sz-stitch-gold" viewBox="0 0 300 24" preserveAspectRatio="none" focusable="false"><defs><linearGradient id="szGoldH" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0"><stop offset="0" stop-color="#c8921f"/><stop offset=".5" stop-color="#f0c24d"/><stop offset="1" stop-color="#e0a82e"/></linearGradient></defs><line x1="3" y1="12" x2="297" y2="12" stroke="url(#szGoldH)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="7 6"/></svg>
+     <span class="sz-needle"><svg viewBox="0 0 40 16" focusable="false"><path d="M2.5 3.2 L2.5 6.6 L38.5 11.8 Z" fill="url(#szGold)"/><ellipse cx="3.6" cy="4.9" rx="1.3" ry="2" fill="#fff6d2" stroke="#b8821a" stroke-width=".7"/></svg></span>
+    </div>
+    <span class="sz-status">Opening your workspace<i>.</i><i>.</i><i>.</i></span>
+   </div>
+  </div>
+  <div class="ambient ambient-one">
+  </div>
+  <div class="ambient ambient-two">
+  </div>
+  <div class="app-shell">
+   <header class="topbar">
+    <a aria-label="SEWZA home" class="brand" data-view="dashboard" href="#">
+     <img class="brand-logo" src="sewza-mark.png" alt="SEWZA logo"/>
+     <span><strong>SEWZA</strong><small>Simple. Smart. Made for tailors.</small></span>
+    </a>
+    <div class="top-actions">
+     <button aria-label="Help" class="icon-btn help-quick-btn" data-view="help" id="helpQuickBtn" title="Help &amp; settings" type="button">
+      ?
+     </button>
+     <button aria-label="Theme settings" class="icon-btn" id="themeQuickBtn" title="Theme settings">
+      ◐
+     </button>
+     <button aria-label="Install SEWZA" class="icon-btn install-app-btn" id="installAppBtn" title="Install SEWZA" hidden>
+      ⇩
+     </button>
+     <button aria-label="Open profile" class="profile-chip" id="profileBtn" title="Profile settings">
+      <span class="avatar" id="profileAvatarTop">S</span>
+      <span class="profile-name" id="profileBusinessName">SEWZA</span>
+      <span class="chevron">
+       ↪
+      </span>
+     </button>
+    </div>
+   </header>
+   <div class="layout">
+    <aside class="sidebar" id="sidebar">
+     <nav>
+      <button class="nav-item active" data-view="dashboard">
+       <span>
+        ⌂
+       </span>
+       Dashboard
+      </button>
+      <button class="nav-item" data-view="customers">
+       <span>
+        ♙
+       </span>
+       Customers
+      </button>
+      <button class="nav-item business-nav" data-view="business">
+       <span>₦</span>
+       Business
+      </button>
+      <button class="nav-item calc-nav" data-view="calculator" aria-label="Calculator" title="Calculator">
+       <span><svg class="svg-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.8" width="14" height="18.4" rx="3.2"/><rect x="8" y="5.8" width="8" height="3.4" rx="1.1"/><circle cx="9" cy="13" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r=".95" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r=".95" fill="currentColor" stroke="none"/><circle cx="9" cy="16.6" r=".95" fill="currentColor" stroke="none"/><circle cx="12" cy="16.6" r=".95" fill="currentColor" stroke="none"/><circle cx="15" cy="16.6" r=".95" fill="currentColor" stroke="none"/></svg></span>
+       Calculator
+      </button>
+      <button class="nav-item add-customer-nav" data-view="add" aria-label="Add customer" title="Add customer">
+       <span>＋</span>
+       <em>Add</em>
+      </button>
+      <button class="nav-item" data-view="themes">
+       <span>◐</span>
+       Appearance
+      </button>
+      <button class="nav-item" data-view="help">
+       <span>?</span>
+       Help
+      </button>
+     </nav>
+     <div class="sidebar-bottom">
+      <div class="mini-card">
+       <span class="mini-icon">
+        ☁
+       </span>
+       <div>
+        <b>
+         SEWZA ready
+        </b>
+        <small data-offline-status>Local data ready</small>
+       </div>
+      </div>
+      <button class="nav-item" data-view="login">
+       <span>
+        ↪
+       </span>
+       Sign out
+      </button>
+     </div>
+    </aside>
+    <main class="main-content">
+     <!-- LOGIN -->
+     <section class="view active" id="view-login">
+      <div class="login-page">
+       <div class="login-art">
+        <div class="login-logo-wrap"><img class="login-logo" src="sewza-logo.png" alt="SEWZA logo"/></div>
+        <p class="eyebrow">
+         THE DIGITAL MEASUREMENT BOOK
+        </p>
+        <h1>
+         Your craft,
+         <br/>
+         <em>beautifully organised.</em>
+        </h1>
+        <p class="lead">
+         A calm, beautiful workspace for tailors to save customer measurements, photos and notes — without carrying a paper book everywhere.
+        </p>
+        <div class="login-features">
+         <span>
+          ✓ Fast
+         </span>
+         <span>
+          ✓ Simple
+         </span>
+         <span>
+          ✓ Cloud-ready
+         </span>
+        </div>
+       </div>
+       <form class="auth-card" id="loginForm" novalidate>
+        <div class="auth-brand">
+         <div class="auth-logo">S</div>
+         <div class="auth-brand-copy"><strong>SEWZA</strong><span>Digital Measurement Book</span></div>
+        </div>
+        <div class="auth-heading">
+         <p class="eyebrow" id="authEyebrow">WELCOME BACK</p>
+         <h2 id="authTitle">Sign in to SEWZA</h2>
+         <p class="muted" id="authSubtitle">Continue to your tailoring workspace.</p>
+        </div>
+
+        <div class="auth-fields">
+         <label>
+          Email
+          <input id="loginEmail" required type="email" autocomplete="email" placeholder="you@example.com"/>
+         </label>
+
+         <label>
+          Password
+          <div class="password-wrap">
+           <input id="loginPassword" required type="password" autocomplete="current-password" minlength="6" placeholder="Enter your password"/>
+           <button class="show-pass" id="showPass" type="button" aria-label="Show password">Show</button>
+          </div>
+         </label>
+
+         <div class="signup-fields" id="signupFields" hidden>
+          <label>
+           Full name
+           <input id="signupName" type="text" autocomplete="name" placeholder="Your full name"/>
+          </label>
+          <label>
+           Business name
+           <input id="signupBusiness" type="text" autocomplete="organization" placeholder="e.g. Your Tailoring Business" />
+           <small class="field-hint">This is the name you will see throughout your SEWZA workspace.</small>
+          </label>
+         </div>
+        </div>
+
+        <div class="auth-error" id="authMessage" role="status" aria-live="polite"></div>
+
+        <button class="primary-btn full auth-submit" id="authSubmitBtn" type="submit">
+         Sign in <span>→</span>
+        </button>
+
+        <button class="text-btn auth-switch" id="authToggleBtn" type="button">
+         New to SEWZA? Create an account
+        </button>
+
+        <button class="forgot-btn" id="forgotPasswordBtn" type="button">
+         Forgot your password?
+        </button>
+
+        <div class="auth-trust">
+         <span>🔒 Secure account</span>
+         <span>☁ Your workspace</span>
+        </div>
+       </form>
+      </div>
+     </section>
+     <!-- DASHBOARD -->
+     <section class="view" id="view-dashboard">
+      <div class="page-head dash-head">
+       <div>
+        <p class="eyebrow">YOUR WORKSPACE</p>
+        <h1>Welcome back.</h1>
+        <p class="muted">Every customer, measurement and delivery — calmly in one place.</p>
+       </div>
+       <button class="primary-btn" data-view="add">＋ Add customer</button>
+      </div>
+      <!-- Dashboard slideshow: SEWZA illustrations only (filled by app.js) -->
+      <section class="dash-slideshow" id="dashSlideshow" aria-roledescription="carousel" aria-label="SEWZA slideshow">
+       <div class="ss-viewport" id="ssViewport"></div>
+       <button class="ss-nav ss-prev" id="ssPrev" type="button" aria-label="Previous slide">‹</button>
+       <button class="ss-nav ss-next" id="ssNext" type="button" aria-label="Next slide">›</button>
+       <div class="ss-dots" id="ssDots" role="tablist" aria-label="Choose slide"></div>
+       <div class="ss-progress" aria-hidden="true"><i id="ssProgress"></i></div>
+      </section>
+      <!-- Getting started (new users) — filled and shown by app.js -->
+      <section class="gs-card" id="gsCard" aria-labelledby="gsTitle" hidden>
+       <div class="gs-top">
+        <div class="gs-ring" aria-hidden="true">
+         <svg viewBox="0 0 44 44"><circle class="gs-ring-bg" cx="22" cy="22" r="19"/><circle class="gs-ring-fg" id="gsRingFg" cx="22" cy="22" r="19"/></svg>
+         <b id="gsCount">0/4</b>
+        </div>
+        <div class="gs-copy">
+         <h3 id="gsTitle">Get started in 4 easy steps</h3>
+         <p>Tick these off and your measurement book is ready for real customers.</p>
+        </div>
+        <button class="gs-hide" id="gsHide" type="button" aria-label="Hide getting started">×</button>
+       </div>
+       <ol class="gs-steps" id="gsSteps"></ol>
+       <div class="gs-foot"><button class="ghost-btn" id="gsTour" type="button">▶ Take the 1-minute tour</button></div>
+      </section>
+      <div class="stat-grid">
+       <div class="stat-card">
+        <div class="stat-icon">♙</div>
+        <span>Total customers</span>
+        <strong id="totalCustomers">0</strong>
+        <small>All saved profiles</small>
+       </div>
+       <div class="stat-card">
+        <div class="stat-icon">⌁</div>
+        <span>Measurements</span>
+        <strong id="totalMeasurements">0</strong>
+        <small>Saved measurement sets</small>
+       </div>
+       <div class="stat-card">
+        <div class="stat-icon">◷</div>
+        <span>Recently added</span>
+        <strong id="recentCount">0</strong>
+        <small>In the last 7 days</small>
+       </div>
+       <div class="stat-card accent-stat">
+        <div class="stat-icon">₦</div>
+        <span>Outstanding balance</span>
+        <strong id="outstandingAmount">₦0</strong>
+        <small>Across saved orders</small>
+       </div>
+       <div class="stat-card status-stat">
+        <div class="stat-icon">☁</div>
+        <span>Backup status</span>
+        <strong id="backupStatus">Ready</strong>
+        <small id="backupSub">Local data ready for Supabase sync</small>
+       </div>
+      </div>
+      <div class="dash-cols">
+       <div class="dash-col">
+        <div class="panel recent-panel">
+         <div class="panel-head">
+          <div><h3>Recent customers</h3><p>Jump back into a measurement profile.</p></div>
+          <button class="text-link" data-view="customers">View all →</button>
+         </div>
+         <div class="customer-list" id="recentCustomers"></div>
+        </div>
+        <div class="panel quick-panel">
+         <div class="panel-head">
+          <div><h3>Quick actions</h3><p>Everything you need, one tap away.</p></div>
+         </div>
+         <button class="quick-action" data-view="customers">
+          <span><svg class="qa-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg></span>
+          <div><b>Find customer</b><small>Search your measurement book</small></div>
+          <i>→</i>
+         </button>
+         <button class="quick-action" data-view="business">
+          <span>₦</span><div><b>Payments &amp; receipts</b><small>Track balances, payments and reminders</small></div><i>→</i>
+         </button>
+         <button class="quick-action" data-view="calculator">
+          <span><svg class="qa-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg></span><div><b>Calculator</b><small>Sums, conversions and price quotes</small></div><i>→</i>
+         </button>
+         <button class="quick-action" data-view="themes">
+          <span><svg class="qa-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg></span>
+          <div><b>Make it yours</b><small>Choose your workspace theme</small></div>
+          <i>→</i>
+         </button>
+        </div>
+       </div>
+       <div class="dash-col">
+        <div class="panel delivery-panel" id="deliveryPanel">
+         <div class="panel-head">
+          <div>
+           <h3>Delivery reminders</h3>
+           <p>Track what is ready, approaching, and due.</p>
+          </div>
+          <button class="ghost-btn alarm-btn" id="alarmBtn" type="button">🔔 Enable alarms</button>
+         </div>
+         <div class="delivery-summary" id="deliverySummary"></div>
+         <div class="delivery-list" id="deliveryList"></div>
+        </div>
+        <div class="panel owing-panel" id="owingPanel">
+         <div class="panel-head"><div><h3>Owing list</h3><p>Customers with an outstanding balance, highest first.</p></div><span class="owing-total" id="owingTotal">₦0</span></div>
+         <div class="owing-list" id="owingList"></div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <!-- CUSTOMERS -->
+     <section class="view" id="view-customers">
+      <div class="page-head">
+       <div>
+        <p class="eyebrow">
+         MEASUREMENT BOOK
+        </p>
+        <h1>
+         Customers
+        </h1>
+        <p class="muted">
+         Find any customer in seconds.
+        </p>
+       </div>
+       <button class="primary-btn" data-view="add">
+        ＋ Add customer
+       </button>
+      </div>
+      <div class="search-bar">
+       <span>
+        ⌕
+       </span>
+       <input id="searchInput" placeholder="Search name, phone, measurements, payments or order history..."/>
+       <kbd>
+        ⌘ K
+       </kbd>
+      </div>
+      <div class="customer-grid" id="customerGrid">
+      </div>
+     </section>
+     <!-- ADD CUSTOMER -->
+     <section class="view" id="view-add">
+      <div class="page-head">
+       <div>
+        <p class="eyebrow">
+         NEW RECORD
+        </p>
+        <h1 id="formTitle">
+         Add customer
+        </h1>
+        <p class="muted" id="formSubtitle">
+         Create a profile, then save their measurements.
+        </p>
+       </div>
+       <button class="ghost-btn" data-view="customers">
+        Cancel
+       </button>
+      </div>
+      <div class="addm" id="addModeTabs" role="tablist" aria-label="What are you adding?" data-mode="single">
+       <i class="addm-pill" aria-hidden="true"></i>
+       <button class="addm-tab active" type="button" role="tab" aria-selected="true" data-add-mode="single" id="amSingle"><span class="addm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><span class="addm-copy"><b>Single customer</b><small>One person, one record</small></span></button>
+       <button class="addm-tab" type="button" role="tab" aria-selected="false" data-add-mode="group" id="amGroup"><span class="addm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.6-3.2 3-4.9 6-4.9s5.4 1.7 6 4.9"/><circle cx="17" cy="9.5" r="2.5"/><path d="M16.5 14.8c2.6-.2 4.1 1.2 4.5 3.7"/></svg></span><span class="addm-copy"><b>Group order</b><small>Uniform or event dress</small></span><i class="addm-dot" id="amGroupDot" hidden></i></button>
+      </div>
+      <div class="form-layout">
+       <form class="panel customer-form" id="customerForm">
+        <div class="form-section">
+         <div class="section-title">
+          <span>
+           01
+          </span>
+          <div>
+           <h3>
+            Customer details
+           </h3>
+           <p>
+            The basics you need to recognize them.
+           </p>
+          </div>
+         </div>
+         <div class="photo-row">
+          <div class="photo-col">
+           <div class="photo-upload" id="photoPreview">
+            ＋
+            <small>
+             Add photo
+            </small>
+            <input accept="image/*" id="customerPhoto" type="file"/>
+           </div>
+           <button class="photo-remove" id="removePhotoBtn" type="button" hidden>Remove photo</button>
+           <span class="photo-optional">Optional</span>
+          </div>
+          <div class="field-grid two">
+           <label>
+            Full name
+            <input id="customerName" placeholder="e.g. Aisha Bello" required=""/>
+           </label>
+           <label>
+            Phone number
+            <input id="customerPhone" placeholder="e.g. 0803 123 4567"/>
+           </label>
+           <label>
+            Gender
+            <select id="customerGender">
+             <option>
+              Female
+             </option>
+             <option>
+              Male
+             </option>
+             <option>
+              Other
+             </option>
+            </select>
+           </label>
+           <label>
+            Style / category
+            <select id="customerCategory">
+             <option>Dress / Gown</option>
+             <option>Flare Gown</option>
+             <option>Native Wear</option>
+             <option>Two-Piece</option>
+             <option>Shirt</option>
+             <option>Trousers</option>
+             <option>Agbada</option>
+             <option>Skirt</option>
+             <option>Custom</option>
+            </select>
+           </label>
+           <label>
+            Starting date
+            <input id="startDate" type="date" required="">
+           </label>
+           <label>
+            Delivery date
+            <input id="deliveryDate" type="date" required="">
+           </label>
+          </div>
+         </div>
+        </div>
+        <div class="form-section">
+         <div class="section-title">
+          <span>
+           02
+          </span>
+          <div>
+           <h3>
+            Measurements
+           </h3>
+           <p>
+            Optional — enter only what you took today. You can add more later.
+           </p>
+          </div>
+         </div>
+         <div class="measurement-controls">
+          <label class="measurement-gender" hidden><span>Measuring</span><select id="measurementGender" tabindex="-1" aria-hidden="true"><option value="Female">Female</option><option value="Male">Male</option></select></label><div class="measure-for" id="measureFor" aria-live="polite"><span class="mf-ico" aria-hidden="true">♀</span><div><small>Measuring for</small><b id="measureForText">Female</b></div></div>
+          <label class="measurement-fabric"><span>Fabric width</span><select id="fabricWidth"><option value="45">45 inches</option><option value="60">60 inches</option></select></label>
+          <label class="trouser-toggle"><input type="checkbox" id="includeTrouser"><span>Also measure trouser</span></label>
+         </div>
+         <div class="template-row">
+          <span>
+           Garment shortcut
+          </span>
+          <button class="template active" data-template="dress" type="button">Dress / Gown</button>
+          <button class="template" data-template="native" type="button">Native</button>
+          <button class="template" data-template="shirt" type="button">Shirt</button>
+          <button class="template" data-template="trouser" type="button">Trousers</button>
+         </div>
+         <div class="unit-row">
+          <span>Measurement unit</span>
+          <div class="unit-switch" role="group" aria-label="Measurement unit">
+           <button class="unit-btn active" data-unit="in" type="button">Inches (in)</button>
+           <button class="unit-btn" data-unit="cm" type="button">Centimetres (cm)</button>
+          </div>
+          <span class="unit-help">Enter measurements in the unit shown. You can switch units for each record.</span>
+         </div>
+         <div class="measurement-grid" id="measurementFields"></div>
+         <div class="fabric-planner-card" id="draftFabricPlanner">
+          <div class="fabric-planner-icon">✂</div>
+          <div class="fabric-planner-copy">
+           <span class="eyebrow">SMART FABRIC GUIDE</span>
+           <h3 id="draftFabricTitle">Add the key measurements to estimate fabric</h3>
+           <p id="draftFabricText">Choose the garment style and enter the measurements. SEWZA will show an approximate yardage before you save.</p>
+          </div>
+          <div class="fabric-yard-badge" id="draftFabricYards">— yards</div>
+         </div>
+         <div class="custom-measurements-head">
+          <div><b>Custom measurements</b><small>Add anything your template needs.</small></div>
+          <button class="ghost-btn small-btn" id="addCustomMeasurement" type="button">＋ Add measurement</button>
+         </div>
+         <div class="custom-measurement-fields" id="customMeasurementFields"></div>
+        </div>
+        <div class="form-section">
+         <div class="section-title">
+          <span>03</span>
+          <div><h3>Order & payment</h3><p>Optional — track price, payment and progress for this customer.</p></div>
+         </div>
+         <div class="field-grid three">
+          <label>Order price (₦)<input id="price" inputmode="numeric" placeholder="e.g. 45000"></label>
+          <label>Amount paid (₦)<input id="paid" inputmode="numeric" placeholder="e.g. 20000"></label>
+          <label>Order status<select id="orderStatus"><option>In progress</option><option>Waiting for fabric</option><option>Ready</option><option>Delivered</option><option>Cancelled</option></select></label>
+         </div>
+        </div>
+        <div class="form-section">
+         <div class="section-title">
+          <span>04</span>
+          <div>
+           <h3>
+            Notes
+           </h3>
+           <p>
+            Anything your future self should remember.
+           </p>
+          </div>
+         </div>
+         <textarea id="customerNotes" placeholder="Preferred fit, fabric notes, delivery date..." rows="4"></textarea>
+        </div>
+        <button class="primary-btn full save-btn" type="submit">
+         Save customer & measurements
+         <span>
+          →
+         </span>
+        </button>
+       </form>
+       <div class="panel side-tip">
+        <span class="tip-icon">
+         ✦
+        </span>
+        <h3>
+         Never lose the book again.
+        </h3>
+        <p>
+         Every profile is designed to become a permanent digital record. When Supabase is connected, your records can follow you to any device.
+        </p>
+        <div class="tip-line">
+         <span>
+          ✓
+         </span>
+         Customer photo
+        </div>
+        <div class="tip-line">
+         <span>
+          ✓
+         </span>
+         Measurement history
+        </div>
+        <div class="tip-line">
+         <span>
+          ✓
+         </span>
+         Search anytime
+        </div>
+        <div class="tip-line">
+         <span>
+          ✓
+         </span>
+         Cloud backup
+        </div>
+       </div>
+      </div>
+     <div class="grp-wrap">
+      <!-- v10: group orders -->
+      <div class="grp-studio" id="groupStudio">
+       <section class="grp-hero">
+        <div class="grp-hero-copy">
+         <p class="eyebrow">GROUP ORDERS</p>
+         <h2>One cloth, many people. Added in minutes.</h2>
+         <p>Made for school uniforms, aso-ebi, church groups and family events. Add everyone once, keep every measurement, and find the whole group again anytime.</p>
+         <div class="grp-hero-stats">
+          <div><b id="grpStatGroups">0</b><span>Groups</span></div>
+          <div><b id="grpStatPeople">0</b><span>People</span></div>
+          <div><b id="grpStatUniform">0</b><span>Uniforms</span></div>
+         </div>
+        </div>
+        <div class="grp-hero-art" aria-hidden="true">
+         <svg viewBox="0 0 220 180" fill="none">
+          <circle class="ga-ring" cx="110" cy="90" r="66" stroke="currentColor" stroke-width="2" stroke-dasharray="4 7" stroke-linecap="round"/>
+          <g class="ga-sw ga-sw1"><rect x="26" y="34" width="56" height="56" rx="14" fill="currentColor" opacity=".16"/><path d="M26 62h56M54 34v56" stroke="currentColor" stroke-width="2" opacity=".5"/></g>
+          <g class="ga-sw ga-sw2"><rect x="128" y="22" width="60" height="48" rx="14" fill="currentColor" opacity=".24"/><circle cx="158" cy="46" r="9" stroke="currentColor" stroke-width="2" opacity=".6"/></g>
+          <g class="ga-sw ga-sw3"><rect x="112" y="98" width="64" height="58" rx="16" fill="currentColor" opacity=".13"/><path d="M122 146l18-30 18 30z" stroke="currentColor" stroke-width="2" opacity=".55" stroke-linejoin="round"/></g>
+          <g class="ga-sw ga-sw4"><rect x="38" y="106" width="52" height="46" rx="13" fill="currentColor" opacity=".2"/><path d="M48 129h32" stroke="currentColor" stroke-width="2" stroke-dasharray="3 5" opacity=".7"/></g>
+         </svg>
+        </div>
+       </section>
+
+       <div class="panel grp-builder" id="groupBuilder">
+        <div class="grp-editing" id="grpEditing" hidden>
+         <span>Editing <b id="grpEditingName">group</b></span>
+         <button class="ghost-btn" id="grpCancelEdit" type="button">Cancel edit</button>
+        </div>
+
+        <div class="grp-section">
+         <div class="section-title"><span>01</span><div><h3>What is it for?</h3><p>This decides which details we ask for.</p></div></div>
+         <div class="grp-type" role="radiogroup" aria-label="Group type">
+          <button class="grp-type-card active" type="button" role="radio" aria-checked="true" data-gtype="uniform">
+           <span class="grp-type-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3c-.5 1.5-1.8 2.3-4 2.3S8.5 4.5 8 3z"/></svg></span>
+           <span><b>Uniform</b><small>School, church, office or club. Name, class, measurements and photo.</small></span>
+          </button>
+          <button class="grp-type-card" type="button" role="radio" aria-checked="false" data-gtype="dress">
+           <span class="grp-type-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-.8 5.5L19 21H5l4.8-12.5z"/><path d="M9.8 8.5h4.4"/></svg></span>
+           <span><b>Dress / Event</b><small>Aso-ebi, wedding party or family cloth. Name and measurements.</small></span>
+          </button>
+         </div>
+        </div>
+
+        <div class="grp-section">
+         <div class="section-title"><span>02</span><div><h3>Group details</h3><p>Pick the gender once and the styles follow.</p></div></div>
+         <div class="grp-grid">
+          <label class="grp-wide"><span id="grpNameLabel">School / group name</span><input id="grpName" maxlength="80" autocomplete="off" placeholder="e.g. Greenfield College, JSS 2"></label>
+          <div class="grp-wide"><span class="grp-label">Category</span><div class="grp-chips" id="grpCats" role="radiogroup" aria-label="Category"></div></div>
+          <div class="grp-wide"><span class="grp-label">Who is it for?</span>
+           <div class="grp-seg" id="grpGender" role="radiogroup" aria-label="Who is it for" data-n="3" data-i="2">
+            <i class="grp-seg-pill" aria-hidden="true"></i>
+            <button type="button" role="radio" data-gg="Female">Female</button>
+            <button type="button" role="radio" data-gg="Male">Male</button>
+            <button type="button" role="radio" data-gg="Mixed">Mixed</button>
+           </div>
+           <small class="grp-hint" id="grpGenderHint"></small>
+          </div>
+          <label class="grp-wide"><span>Style / garment</span><select id="grpStyle"></select></label>
+          <label><span>Starting date</span><input type="date" id="grpStart"></label>
+          <label><span>Delivery date</span><input type="date" id="grpDelivery"></label>
+          <label><span>Fabric width</span><select id="grpFabricWidth"><option value="45">45 inches</option><option value="60">60 inches</option></select></label>
+          <label><span>Price per person (₦), optional</span><input id="grpPrice" inputmode="numeric" maxlength="12" placeholder="e.g. 8000"></label>
+         </div>
+        </div>
+
+        <div class="grp-section">
+         <div class="section-title"><span>03</span><div><h3>Cloth photos</h3><p>Photograph the fabric, the sample or the finished style. It stays with this group.</p></div></div>
+         <label class="grp-drop" id="grpDrop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.4h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.4"/></svg>
+          <b>Add cloth photos</b><small>Up to 6 photos</small>
+          <input type="file" accept="image/*" multiple id="grpClothInput">
+         </label>
+         <div class="grp-cloth" id="grpCloth"></div>
+        </div>
+
+        <div class="grp-section">
+         <div class="section-title"><span>04</span><div><h3>People <em class="grp-count" id="grpCount">0</em></h3><p id="grpPeopleHint">Add each person once. Tap Measurements to fill them in.</p></div></div>
+         <div class="grp-toolbar">
+          <div class="grp-uswitch" role="group" aria-label="Measurement unit">
+           <button class="grp-ubtn active" data-gunit="in" type="button">Inches (in)</button>
+           <button class="grp-ubtn" data-gunit="cm" type="button">Centimetres (cm)</button>
+          </div>
+          <label class="grp-check"><input type="checkbox" id="grpTrouser"><span>Also measure trouser</span></label>
+         </div>
+         <div class="grp-members" id="grpMembers"></div>
+         <div class="grp-add-row">
+          <button class="primary-btn grp-add" id="grpAddMember" type="button">＋ Add person</button>
+          <button class="ghost-btn" id="grpPasteToggle" type="button" aria-expanded="false">Paste a list of names</button>
+         </div>
+         <div class="grp-paste" id="grpPaste" hidden>
+          <label><span id="grpPasteLabel">One person per line</span><textarea id="grpPasteText" rows="5" placeholder="Adebayo Tunde, JSS 2A&#10;Chioma Okeke, JSS 2B"></textarea></label>
+          <button class="primary-btn" id="grpPasteGo" type="button">Add these names</button>
+         </div>
+        </div>
+
+        <div class="grp-section">
+         <div class="section-title"><span>05</span><div><h3>Notes</h3><p>Anything everyone in this group should get.</p></div></div>
+         <textarea id="grpNotes" rows="3" maxlength="600" placeholder="Fabric colour, badge position, fitting date..."></textarea>
+        </div>
+
+        <div class="grp-footer">
+         <div class="grp-summary" id="grpSummary" aria-live="polite"></div>
+         <div class="grp-actions">
+          <button class="primary-btn full save-btn" id="grpSave" type="button">Save group <span>→</span></button>
+          <button class="ghost-btn" id="grpClear" type="button">Clear form</button>
+         </div>
+        </div>
+       </div>
+
+       <section class="panel grp-library" id="groupLibrary">
+        <div class="panel-head">
+         <div><h3>Saved groups</h3><p>Every uniform and event order, organised by category.</p></div>
+         <input type="search" id="grpSearch" placeholder="Search groups or people" aria-label="Search groups or people">
+        </div>
+        <div class="grp-filters" id="grpFilters"></div>
+        <div class="grp-cards" id="grpCards"></div>
+       </section>
+      </div>
+     </div>
+     </section>
+     <!-- PROFILE -->
+     <section class="view" id="view-profile">
+      <div class="profile-head">
+       <button class="back-btn" data-view="customers">
+        ← Customers
+       </button>
+       <div class="profile-main">
+        <div class="large-avatar" id="profileAvatar">
+         A
+        </div>
+        <div>
+         <p class="eyebrow">
+          CUSTOMER PROFILE
+         </p>
+         <h1 id="profileName">
+          Aisha Bello
+         </h1>
+         <p class="muted" id="profileMeta">
+          0803 123 4567 · Dress
+         </p>
+        </div>
+       </div>
+       <div class="profile-actions">
+        <button class="ghost-btn" id="whatsappBtn">
+         WhatsApp
+        </button>
+        <button class="primary-btn" id="editProfileBtn">
+         Edit
+        </button>
+        <button class="danger-btn" id="deleteProfileBtn" type="button">
+         Delete profile
+        </button>
+       </div>
+      </div>
+      <div class="profile-grid">
+       <div class="panel order-summary-panel">
+        <div class="panel-head"><div><h3>Order & payment</h3><p>Quick view of this customer's money and progress.</p></div><span class="status-badge" id="profileOrderStatus">In progress</span></div>
+        <div class="money-grid">
+         <div><span>Order price</span><b id="profilePrice">₦0</b></div>
+         <div><span>Paid</span><b id="profilePaid">₦0</b></div>
+         <div><span>Balance</span><b id="profileBalance">₦0</b></div>
+        </div>
+        <div class="payment-entry"><div><b>Record payment</b><small>Keep the exact amount, date, time and payment method.</small></div><div class="payment-form"><input id="paymentAmount" inputmode="numeric" placeholder="Amount ₦"><select id="paymentMethod"><option>Cash</option><option>Bank transfer</option><option>POS</option><option>Card</option><option>Other</option></select><input id="paymentDate" type="date"><input id="paymentTime" type="time"><input id="paymentNote" placeholder="Note (optional)"><button class="primary-btn" id="recordPaymentBtn" type="button">+ Record payment</button></div></div>
+        <div class="payment-history"><div class="panel-head mini"><div><h4>Payment history</h4><p>Every payment stays attached to this customer.</p></div></div><div id="paymentHistory"></div></div>
+        <div class="profile-money-actions">
+         <button class="ghost-btn" id="receiptBtn" type="button">🧾 Send receipt</button>
+         <button class="primary-btn" id="remindFromProfileBtn" type="button">💬 Send reminder</button>
+        </div>
+        <p class="money-note" id="profileReceiptNote">Receipt sending is available while a balance is outstanding.</p>
+       </div>
+       <div class="panel delivery-detail-panel">
+        <div class="panel-head">
+         <div>
+          <h3>Order & delivery</h3>
+          <p>Keep this customer's sewing schedule visible.</p>
+         </div>
+         <span class="status-badge" id="profileDeliveryStatus">No schedule</span>
+        </div>
+        <div class="schedule-grid">
+         <div class="schedule-card">
+          <span>Starting date</span>
+          <b id="profileStartDate">—</b>
+         </div>
+         <div class="schedule-card">
+          <span>Delivery date</span>
+          <b id="profileDeliveryDate">—</b>
+         </div>
+        </div>
+        <div class="delivery-message" id="profileDeliveryMessage">No delivery date has been set.</div>
+       </div>
+       <div class="panel fabric-estimate-panel"><div id="fabricEstimate"></div></div>
+       <div class="panel">
+        <div class="panel-head">
+         <div>
+          <h3>
+           Current measurements
+          </h3>
+          <p id="profileDate">
+           Saved today
+          </p>
+         </div>
+         <button class="text-link" id="newMeasurementBtn">
+          ＋ New set
+         </button>
+        </div>
+        <div class="measure-cards" id="profileMeasurements">
+        </div>
+       </div>
+       <div class="panel">
+        <div class="panel-head">
+         <div>
+          <h3>
+           Customer notes
+          </h3>
+          <p>
+           Private notes for your work.
+          </p>
+         </div>
+        </div>
+        <div class="note-box" id="profileNotes">
+         No notes yet.
+        </div>
+        <div class="history-title">
+         Measurement history
+        </div>
+        <div class="history-item current-history"><span>Current set</span><b id="historyDate">Today</b><i>●</i></div>
+        <div id="measurementHistory"></div>
+       </div>
+      </div>
+     </section>
+     <!-- BUSINESS -->
+     <section class="view" id="view-business">
+      <div class="page-head">
+       <div><p class="eyebrow">BUSINESS CENTRE</p><h1>Payments & money</h1><p class="muted">See who owes you, record payments and send polished reminders or receipts.</p></div>
+       <button class="ghost-btn" data-view="dashboard">← Dashboard</button>
+      </div>
+      <div class="business-stat-grid">
+       <div class="business-stat-card"><span>Outstanding</span><strong id="businessOutstanding">₦0</strong><small>Total unpaid balance</small></div>
+       <div class="business-stat-card"><span>Customers owing</span><strong id="businessOwingCount">0</strong><small>Orders with a balance</small></div>
+       <div class="business-stat-card"><span>Payments today</span><strong id="businessTodayPaid">₦0</strong><small>Recorded on this device</small></div>
+      </div>
+      <div class="business-grid">
+       <section class="panel business-owing-panel">
+        <div class="panel-head"><div><h3>Customers who owe you</h3><p>Call, remind or send an outstanding-payment receipt.</p></div><span class="owing-total" id="businessOwingTotal">₦0</span></div>
+        <div class="owing-list" id="businessOwingList"></div>
+       </section>
+       <section class="panel recent-payments-panel">
+        <div class="panel-head"><div><h3>Recent payments</h3><p>Every payment keeps its date, time and method.</p></div></div>
+        <div id="businessPaymentList"></div>
+       </section>
+      </div>
+      <section class="panel business-guide">
+       <div class="business-guide-icon">✓</div>
+       <div><h3>How SEWZA keeps your money organised</h3><p>Open any customer → record each payment → SEWZA calculates the balance → use Reminder or Send receipt only when there is still money outstanding.</p></div>
+      </section>
+     </section>
+     <!-- CALCULATOR -->
+     <section class="view" id="view-calculator">
+      <div class="page-head">
+       <div>
+        <p class="eyebrow">TAILOR'S TOOLS</p>
+        <h1>Calculator</h1>
+        <p class="muted">Quick sums, measurement conversions and a pricing quote — all in one place.</p>
+       </div>
+       <button class="ghost-btn" data-view="dashboard">← Dashboard</button>
+      </div>
+      <div class="seg-tabs calc-tabs" id="calcTabs" role="tablist" aria-label="Calculator tools" style="--n:3;--i:0">
+       <span class="seg-indicator" aria-hidden="true"></span>
+       <button class="seg-btn active" type="button" role="tab" aria-selected="true" data-calc-tab="calc">Calculator</button>
+       <button class="seg-btn" type="button" role="tab" aria-selected="false" data-calc-tab="convert">Convert</button>
+       <button class="seg-btn" type="button" role="tab" aria-selected="false" data-calc-tab="quote">Quote</button>
+      </div>
+      <div class="calc-stage">
+       <section class="calc-pane active" id="calcPane-calc">
+        <div class="calc-layout">
+         <div class="calc-card" id="calcCard">
+          <div class="calc-glow" aria-hidden="true"></div>
+          <div class="calc-display" id="calcDisplay" aria-live="polite">
+           <div class="calc-expr" id="calcExpr"></div>
+           <div class="calc-result" id="calcResult">0</div>
+          </div>
+          <div class="calc-keys" id="calcKeys"></div>
+         </div>
+         <div class="panel calc-history">
+          <div class="panel-head">
+           <div><h3>History</h3><p>Tap a result to use it again.</p></div>
+           <button class="text-link" id="calcClearHistory" type="button">Clear</button>
+          </div>
+          <div id="calcHistory"></div>
+         </div>
+        </div>
+       </section>
+       <section class="calc-pane" id="calcPane-convert">
+        <div class="panel convert-card">
+         <div class="panel-head">
+          <div><h3>Length converter</h3><p>Type a value and choose its unit — every other unit updates instantly.</p></div>
+         </div>
+         <div class="convert-input">
+          <input id="cvValue" inputmode="decimal" autocomplete="off" placeholder="e.g. 36"/>
+          <div class="chip-row" id="cvUnits">
+           <button type="button" class="chip active" data-cv-unit="in">Inches</button>
+           <button type="button" class="chip" data-cv-unit="cm">Centimetres</button>
+           <button type="button" class="chip" data-cv-unit="ft">Feet</button>
+           <button type="button" class="chip" data-cv-unit="yd">Yards</button>
+           <button type="button" class="chip" data-cv-unit="m">Metres</button>
+          </div>
+         </div>
+         <div class="convert-results" id="cvResults"></div>
+         <p class="tiny">Tap a result to copy it.</p>
+        </div>
+       </section>
+       <section class="calc-pane" id="calcPane-quote">
+        <div class="panel quote-card">
+         <div class="panel-head">
+          <div><h3>Pricing quote</h3><p>Work out fabric, sewing and deposit before you tell the customer.</p></div>
+          <button class="text-link" id="quoteResetBtn" type="button">Clear</button>
+         </div>
+         <div class="field-grid two quote-fields">
+          <label>Fabric per outfit (yards)<input id="qYards" inputmode="decimal" autocomplete="off" placeholder="e.g. 5"/></label>
+          <label>Price per yard (₦)<input id="qPrice" inputmode="decimal" autocomplete="off" placeholder="e.g. 4500"/></label>
+          <label>Number of outfits<input id="qQty" inputmode="numeric" autocomplete="off" placeholder="1"/></label>
+          <label>Sewing charge per outfit (₦)<input id="qSew" inputmode="decimal" autocomplete="off" placeholder="e.g. 15000"/></label>
+          <label>Extras per outfit (₦) — lining, zip, buttons<input id="qExtra" inputmode="decimal" autocomplete="off" placeholder="e.g. 2000"/></label>
+          <label>Deposit to collect (%)<input id="qDeposit" inputmode="decimal" autocomplete="off" placeholder="e.g. 50"/></label>
+         </div>
+         <div class="quote-result" id="quoteResult"></div>
+        </div>
+       </section>
+      </div>
+     </section>
+     <!-- ACCOUNT -->
+     <section class="view" id="view-account">
+      <div class="page-head"><div><p class="eyebrow">YOUR ACCOUNT</p><h1>Profile & workspace</h1><p class="muted">Update your profile picture and the name shown across SEWZA.</p></div><button class="ghost-btn" data-view="dashboard">← Back</button></div>
+      <div class="account-grid">
+       <div class="panel account-card">
+        <div class="account-identity"><div class="account-avatar-preview" id="accountAvatarPreview">S</div><div><h2 id="accountDisplayName">SEWZA</h2><p class="muted" id="accountEmail"></p></div></div>
+        <label class="photo-picker">Change profile picture<input id="accountAvatarInput" type="file" accept="image/*" hidden><span>Choose image</span></label>
+        <button class="photo-remove account-photo-remove" id="removeAvatarBtn" type="button" hidden>Remove picture</button>
+        <div class="field-grid two account-fields">
+         <label>Full name<input id="accountFullName" type="text" autocomplete="name" placeholder="Your full name"></label>
+         <label>Business name<input id="accountBusinessName" type="text" autocomplete="organization" placeholder="Your tailoring business"></label>
+        </div>
+        <button class="primary-btn" id="saveAccountBtn" type="button">Save profile <span>→</span></button>
+       </div>
+       <div class="panel account-side">
+        <div class="panel-head"><div><h3>Your account</h3><p>Sign out safely and return to this same account later.</p></div><span class="help-icon">◉</span></div>
+        <div class="account-email-box"><small>Signed in as</small><b id="accountEmailSide"></b></div>
+        <button class="danger-btn full" id="signOutBtn" type="button">Sign out</button>
+        <p class="tiny">SEWZA remembers the email address on this device after sign out, so you won't need to type it again.</p>
+       </div>
+      </div>
+      <!-- WORK GALLERY / TAILOR PORTFOLIO -->
+      <div class="panel pf-panel" id="pfPanel">
+       <div class="pf-head">
+        <div><p class="eyebrow">WORK GALLERY</p><h2>Your tailor portfolio</h2><p class="muted">Show off your finished clothes on a beautiful public page, then send the link to customers on WhatsApp.</p></div>
+        <span class="pf-status" id="pfStatus" data-state="new">Not set up</span>
+       </div>
+       <div class="pf-notice" id="pfNotice" role="status" hidden></div>
+
+       <div class="pf-share" id="pfShare">
+        <div class="pf-share-top"><b>Your public link</b><span class="pf-views" id="pfViews" hidden></span></div>
+        <div class="pf-link-row"><span class="pf-link-pre" id="pfLinkPre">portfolio.html?t=</span><input id="pfSlug" type="text" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="40" placeholder="your-business-name" aria-label="Your portfolio link name"></div>
+        <small class="pf-hint" id="pfSlugHint">Letters, numbers and dashes only. Customers will see this in your link.</small>
+        <div class="pf-share-actions">
+         <button class="primary-btn pf-wa" id="pfShareWa" type="button" disabled>Share on WhatsApp</button>
+         <button class="ghost-btn" id="pfCopy" type="button" disabled>Copy link</button>
+         <button class="ghost-btn" id="pfPreview" type="button" disabled>Preview page ↗</button>
+        </div>
+        <small class="pf-hint" id="pfShareHint">Save and publish your portfolio to start sharing.</small>
+       </div>
+
+       <div class="pf-block">
+        <div class="section-title"><span>01</span><div><h3>Your business</h3><p>This is the first thing customers see on your page.</p></div></div>
+        <div class="pf-logo-row">
+         <div class="pf-logo" id="pfLogo" aria-label="Business logo preview">S</div>
+         <div class="pf-logo-actions">
+          <label class="ghost-btn pf-file">Upload logo<input id="pfLogoInput" type="file" accept="image/*" hidden></label>
+          <button class="photo-remove" id="pfLogoRemove" type="button" hidden>Remove logo</button>
+          <small class="pf-hint">A square picture works best.</small>
+         </div>
+        </div>
+        <div class="field-grid two pf-fields">
+         <label>Business name<input id="pfName" type="text" maxlength="80" autocomplete="organization" placeholder="e.g. Ada Couture"></label>
+         <label>Location<input id="pfLocation" type="text" maxlength="100" autocomplete="off" placeholder="e.g. Surulere, Lagos"></label>
+         <label>WhatsApp number<input id="pfWhatsapp" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="e.g. 0803 123 4567"></label>
+         <label>Short tagline<input id="pfTagline" type="text" maxlength="120" autocomplete="off" placeholder="e.g. Native wear & gowns made to fit you"></label>
+         <label class="pf-wide">About your business<textarea id="pfAbout" rows="4" maxlength="900" placeholder="Tell customers who you are, how long you have been sewing and what makes your work special."></textarea></label>
+        </div>
+       </div>
+
+       <div class="pf-block">
+        <div class="section-title"><span>02</span><div><h3>Specialties</h3><p>What you make best. Add up to 10.</p></div></div>
+        <div class="pf-spec-add"><input id="pfSpecInput" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Aso-ebi, Agbada, Wedding gowns" aria-label="Add a specialty"><button class="ghost-btn" id="pfSpecAdd" type="button">Add</button></div>
+        <div class="pf-chips" id="pfSpecList" aria-live="polite"></div>
+        <div class="pf-suggest" id="pfSpecSuggest" aria-label="Suggested specialties"></div>
+       </div>
+
+       <div class="pf-block">
+        <div class="section-title"><span>03</span><div><h3>Social media</h3><p>Optional. Type @yourname or paste the link.</p></div></div>
+        <div class="field-grid two pf-fields" id="pfSocials"></div>
+       </div>
+
+       <div class="pf-block">
+        <div class="section-title"><span>04</span><div><h3>Work photos</h3><p>Upload your finished clothes. Your first photos appear at the top of your page.</p></div></div>
+        <label class="pf-drop" id="pfDrop"><input id="pfWorkInput" type="file" accept="image/*" multiple hidden><span class="pf-drop-ico" aria-hidden="true">＋</span><b>Add photos of your work</b><small id="pfDropHint">Up to 60 photos. They are made smaller automatically.</small></label>
+        <div class="pf-works" id="pfWorks"></div>
+       </div>
+
+       <div class="pf-savebar">
+        <label class="pf-publish"><input id="pfPublished" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf-publish-copy"><b>Publish my portfolio</b><small id="pfPublishHint">Anyone with your link can see it.</small></span></label>
+        <button class="primary-btn" id="pfSave" type="button">Save portfolio <span>→</span></button>
+       </div>
+      </div>
+     </section>
+     <!-- THEMES -->
+     <section class="view" id="view-themes">
+      <div class="page-head">
+       <div><p class="eyebrow">MAKE IT YOURS</p><h1>Appearance</h1><p class="muted">Choose a background palette and a text style. Your choice is saved on this device.</p></div>
+       <button class="ghost-btn" data-view="dashboard">← Back</button>
+      </div>
+      <div class="theme-section panel">
+       <div class="section-title"><span>01</span><div><h3>Background themes</h3><p>Ten premium palettes, including SEWZA's clean white-and-green default.</p></div></div>
+       <div class="theme-grid sewza-theme-grid">
+        <button class="theme-card" data-theme-choice="sewza"><div class="theme-preview sewza-preview"><b>SW</b><i></i></div><b>SEWZA</b><small>Clean green, ivory & gold</small></button>
+        <button class="theme-card" data-theme-choice="midnight"><div class="theme-preview midnight-preview"><b>ST</b><i></i></div><b>Midnight</b><small>Deep navy & champagne</small></button>
+        <button class="theme-card" data-theme-choice="royalnavy"><div class="theme-preview royalnavy-preview"><b>ST</b><i></i></div><b>Royal Navy</b><small>Classic blue & gold</small></button>
+        <button class="theme-card" data-theme-choice="cream"><div class="theme-preview cream-preview"><b>ST</b><i></i></div><b>Warm Cream</b><small>Elegant cocoa & sand</small></button>
+        <button class="theme-card" data-theme-choice="forest"><div class="theme-preview forest-preview"><b>ST</b><i></i></div><b>Forest</b><small>Natural green & ivory</small></button>
+       </div>
+      </div>
+      <div class="theme-section panel">
+       <div class="section-title"><span>02</span><div><h3>Text theme</h3><p>Change how headings and body text feel without changing your records.</p></div></div>
+       <div class="text-theme-grid">
+        <button class="text-theme-choice" data-text-theme="classic"><b>Classic</b><small>Elegant serif headings</small></button>
+        <button class="text-theme-choice" data-text-theme="modern"><b>Modern</b><small>Clean, friendly & simple</small></button>
+        <button class="text-theme-choice" data-text-theme="editorial"><b>Editorial</b><small>Fashion-magazine feel</small></button>
+        <button class="text-theme-choice" data-text-theme="compact"><b>Compact</b><small>Small & efficient</small></button>
+       </div>
+      </div>
+     </section>
+     <!-- HELP -->
+     <section class="view" id="view-help">
+      <div class="page-head"><div><p class="eyebrow">SUPPORT CENTRE</p><h1>Help & settings</h1><p class="muted">Everything you need to make SEWZA comfortable for your daily tailoring work.</p></div><button class="ghost-btn" data-view="dashboard">← Back</button></div>
+      <div class="help-grid">
+       <div class="panel help-guide">
+        <div class="help-guide-copy">
+         <span class="help-icon">✦</span>
+         <div><h3>New to SEWZA?</h3><p>Take a short guided tour that shows exactly how to add customers, save measurements, track delivery and get paid.</p></div>
+        </div>
+        <div class="help-guide-actions">
+         <button class="primary-btn" id="helpTourBtn" type="button">▶ Start the guided tour</button>
+         <button class="ghost-btn" id="helpInstallBtn" type="button" hidden>⇩ Install SEWZA</button>
+        </div>
+       </div>
+       <div class="panel alarm-settings">
+        <div class="panel-head"><div><h3>Ringing & emergency alerts</h3><p>Choose the sound SEWZA uses for delivery reminders while the app is open.</p></div><span class="help-icon">🔔</span></div>
+        <div class="setting-row"><div><b>Delivery alarms</b><small>Notify you when an order is due or overdue.</small></div><button class="toggle-btn" id="helpAlarmToggle" type="button"><span></span><b>Off</b></button></div>
+        <label class="alarm-time-row"><span><b>Reminder time</b><small>Choose when a due-today alert should ring.</small></span><input id="alarmTime" type="time" value="08:00"/></label>
+        <div class="tone-list" id="toneList"></div>
+        <button class="primary-btn full" id="testToneBtn" type="button">▶ Test selected tone</button>
+       </div>
+       <div class="panel data-tools-card">
+        <div class="panel-head"><div><h3>Data safety & backup</h3><p>Your records stay usable without internet. Export a backup before changing devices.</p></div><span class="help-icon">☁</span></div>
+        <div class="offline-status-card"><span class="status-dot"></span><div><b data-offline-status>Local data ready</b><small>Offline-first storage is active on this device.</small></div></div>
+        <div class="data-actions"><button class="primary-btn" id="exportBackup" type="button">Export SEWZA backup</button><button class="ghost-btn" id="exportCSV" type="button">Export CSV</button><label class="ghost-btn file-btn">Import backup<input id="importBackup" type="file" accept="application/json,.json" hidden></label></div>
+        <p class="tiny">When Supabase is connected, these local records can be synced to your account. Keep RLS enabled so each tailor only sees their own data.</p>
+       </div>
+       <div class="panel help-card">
+        <div class="panel-head"><div><h3>Quick help</h3><p>Common questions about using SEWZA.</p></div><span class="help-icon">?</span></div>
+        <div class="faq-list">
+         <details open><summary>What is SEWZA?</summary><p>SEWZA is a digital measurement book for tailors. It keeps customer details, measurements, notes and delivery dates organised in one simple place.</p></details>
+         <details><summary>How do I add my first customer?</summary><p>Tap the gold <b>＋</b> button, type the customer's name, then add any measurements you have taken. Everything except the name is optional, so you can come back and add more later. Tap <b>Save</b> when you are done.</p></details>
+         <details><summary>How do I record a payment or send a receipt?</summary><p>Open the customer, enter the order price, then use <b>Record payment</b> each time they pay. SEWZA works out the balance for you. While a balance is outstanding you can send a receipt or a friendly reminder on WhatsApp.</p></details>
+         <details><summary>How do I install SEWZA on my phone?</summary><p>On Android, tap the install icon at the top (or <b>Install</b> in your browser menu). On iPhone, open SEWZA in Safari, tap the <b>Share</b> button, then <b>Add to Home Screen</b>. It then opens like any other app and keeps working offline.</p></details>
+         <details><summary>Can I use it on my phone?</summary><p>Yes. SEWZA is designed to work on phones, tablets and desktop screens, with large touch-friendly controls on smaller screens.</p></details>
+         <details><summary>Where are my customer records saved?</summary><p>SEWZA is offline-first. Records are saved locally so you can keep working without internet. Supabase can be connected later for secure account-based cloud sync.</p></details>
+         <details><summary>Can I use inches and centimetres?</summary><p>Yes. Choose Inches or Centimetres before entering measurements. Each customer record remembers its selected unit. You can also add custom measurement fields.</p></details>
+         <details><summary>How do delivery reminders work?</summary><p>Set a starting date and delivery date. Turn alarms on and SEWZA checks due orders while the app is open and can show a browser notification if permission is granted.</p></details>
+         <details><summary>Can I change the colours?</summary><p>Yes. Open Appearance to choose any of the ten background themes or switch your text style.</p></details>
+         <details><summary>Can I use my own ringtone file?</summary><p>The current version provides ten built-in emergency-style tones. A future version can support uploaded audio files and deeper device-level notification settings.</p></details>
+        </div>
+       </div>
+      </div>
+     </section>
+    </main>
+   </div>
+  </div>
+  <div class="receipt-modal" id="receiptModal" aria-hidden="true"><div class="receipt-dialog"><div class="receipt-head"><div><p class="eyebrow">OUTSTANDING PAYMENT RECEIPT</p><h2>Receipt preview</h2><small class="receipt-head-note">This receipt is available only while a balance remains.</small></div><button class="icon-btn" id="receiptClose" type="button">×</button></div><div id="receiptPreview"></div><div class="receipt-actions"><button class="primary-btn" id="receiptWhatsAppBtn" type="button">💬 Share receipt to WhatsApp</button><button class="ghost-btn" id="receiptCloseBottom" type="button">Close</button></div></div></div>
+  <div class="celebration" id="celebration" aria-hidden="true">
+   <div class="celebration-card">
+    <div class="celebration-icon">✓</div>
+    <div class="confetti" id="confetti"></div>
+    <p class="eyebrow">RECORD SAVED</p>
+    <h2>Congratulations!</h2>
+    <p>You've added a new customer measurement.</p>
+    <button class="primary-btn" id="celebrationClose" type="button">Continue</button>
+   </div>
+  </div>
+  <div class="reminder-modal" id="reminderModal" aria-hidden="true">
+   <div class="reminder-card">
+    <div class="reminder-bell">🔔</div>
+    <p class="eyebrow">DELIVERY REMINDER</p>
+    <h2 id="reminderTitle">Delivery is due</h2>
+    <p id="reminderText">It is time for this customer's delivery.</p>
+    <button class="primary-btn" id="reminderClose" type="button">I understand</button>
+   </div>
+  </div>
+  <div class="tour-modal" id="tourModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+   <div class="tour-dialog">
+    <button class="tour-skip" id="tourSkip" type="button">Skip</button>
+    <div class="tour-art" id="tourArt" aria-hidden="true"></div>
+    <div class="tour-body" id="tourBody">
+     <p class="eyebrow" id="tourEyebrow"></p>
+     <h2 id="tourTitle"></h2>
+     <p class="tour-text" id="tourText"></p>
+     <ul class="tour-points" id="tourPoints"></ul>
+    </div>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="tour-actions">
+     <button class="ghost-btn" id="tourBack" type="button">Back</button>
+     <button class="primary-btn" id="tourNext" type="button">Next <span>→</span></button>
+    </div>
+   </div>
+  </div>
+  <div class="install-sheet" id="installSheet" aria-hidden="true" role="dialog" aria-labelledby="installTitle">
+   <div class="install-card">
+    <div class="install-head">
+     <img class="install-icon" src="icon-192.png" alt="" width="56" height="56"/>
+     <div class="install-copy">
+      <h3 id="installTitle">Install SEWZA</h3>
+      <p id="installText">Add SEWZA to your home screen. It opens like a real app, loads faster and keeps working offline.</p>
+     </div>
+    </div>
+    <ol class="install-steps" id="installSteps" hidden>
+     <li><span>1</span><div>Tap the <b>Share</b> button <i class="ios-share" aria-hidden="true"></i> in Safari.</div></li>
+     <li><span>2</span><div>Scroll down and tap <b>Add to Home Screen</b>.</div></li>
+     <li><span>3</span><div>Tap <b>Add</b>. SEWZA now lives on your home screen.</div></li>
+    </ol>
+    <div class="install-actions">
+     <button class="ghost-btn" id="installLater" type="button">Not now</button>
+     <button class="primary-btn" id="installYes" type="button">Install app</button>
+    </div>
+   </div>
+  </div>
+  <div class="toast" id="toast">
+   <span>
+    ✓
+   </span>
+   <div>
+    <b>
+     Saved
+    </b>
+    <small>
+     Your customer was added successfully.
+    </small>
+   </div>
+  </div>
+  <div class="grp-modal" id="grpModal" role="dialog" aria-modal="true" aria-labelledby="grpModalTitle" aria-hidden="true">
+   <div class="grp-sheet" id="grpSheet"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="install.js"></script>
+ </body>
+</html>
