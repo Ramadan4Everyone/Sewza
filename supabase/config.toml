@@ -1,0 +1,4 @@
+# Only needed if you deploy with the Supabase CLI from this folder.
+# The function does its own checks (user login for payment alerts, secret for the scheduler).
+[functions.sewza-push]
+verify_jwt = false

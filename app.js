@@ -442,7 +442,7 @@
     if(!selectedCustomer)return; const amount=Number($('#paymentAmount')?.value||0); if(!amount||amount<=0){showToast('Enter payment','Add a valid payment amount.');return;}
     const c=selectedCustomer; const now=new Date(); const chosenDate=$('#paymentDate')?.value||localDateInputValue(now); const chosenTime=$('#paymentTime')?.value||now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}); const payment={id:uid('payment'),amount,date:chosenDate,time:chosenTime,method:$('#paymentMethod')?.value||'Cash',note:$('#paymentNote')?.value.trim()||''};
     c.paymentHistory=Array.isArray(c.paymentHistory)?c.paymentHistory:[]; c.paymentHistory.push(payment); c.paid=paymentTotal(c); c.updatedAt=now.toISOString();
-    saveData().then(()=>{populateProfile(c);refreshUI();$('#paymentAmount').value='';$('#paymentDate').value=localDateInputValue();$('#paymentTime').value=new Date().toTimeString().slice(0,5);$('#paymentNote').value='';showToast('Payment recorded',`${formatMoney(amount)} received from ${c.name}.`);});
+    saveData().then(()=>{populateProfile(c);refreshUI();$('#paymentAmount').value='';$('#paymentDate').value=localDateInputValue();$('#paymentTime').value=new Date().toTimeString().slice(0,5);$('#paymentNote').value='';showToast('Payment recorded',`${formatMoney(amount)} received from ${c.name}.`);try{window.SEWZA_PUSH?.notifyPayment?.(c.name,amount);}catch{}});
   }
   function owingReminderMessage(c){
     return `Hello ${c.name}, this is ${currentProfile?.business_name||'your tailor'}. Your ${c.category||'outfit'} is ${c.status==='Ready'?'ready for collection':'being prepared'}. Your outstanding balance is *${formatMoney(balance(c))}*. Please complete the balance when convenient. Thank you for choosing us.`;
@@ -1445,16 +1445,16 @@
   // Dashboard slideshow — SEWZA illustrations only
   // =====================================================================
   // Want to show your own illustrations too? Put the image files in the "slides" folder and list them here, e.g.
-  //   {src:'our-team.jpg', title:'Our team', sub:'Lagos studio'}
+  //   {src:'slides/our-team.jpg', title:'Our team', sub:'Lagos studio'}
   const CUSTOM_SLIDES=[];
   const SLIDE_MS=5500;
   const builtInSlides=[
-    {src:'slide-fitting.svg',tag:'Perfect fit',title:'Tailors who measure with confidence',sub:'Every fitting saved, every customer remembered.',alt:'A tailor measuring a gown on a mannequin'},
-    {src:'slide-measure.svg',tag:'Measurement book',title:'Every measurement, safely kept',sub:'Say goodbye to the paper notebook.',alt:'A measuring tape, notebook and sewing tools'},
-    {src:'slide-customer.svg',tag:'Made for tailors',title:'The perfect fit starts with a measurement',sub:'Keep every customer\'s measurements one tap away.',alt:'A tailor taking a customer\'s measurements'},
-    {src:'slide-receipts.svg',tag:'Payments',title:'Get paid and stay organised',sub:'Record payments and send receipts in seconds.',alt:'A phone showing a payment receipt'},
-    {src:'slide-studio.svg',tag:'Your studio',title:'Create with style',sub:'From fabric to finished outfit, all in one place.',alt:'A tailor sewing in a bright studio'},
-    {src:'slide-delivery.svg',tag:'On-time delivery',title:'Delivered on time, loved on sight',sub:'Delivery reminders keep every order on schedule.',alt:'Tailored outfits ready for delivery'}
+    {src:'slides/slide-fitting.svg',tag:'Perfect fit',title:'Tailors who measure with confidence',sub:'Every fitting saved, every customer remembered.',alt:'A tailor measuring a gown on a mannequin'},
+    {src:'slides/slide-measure.svg',tag:'Measurement book',title:'Every measurement, safely kept',sub:'Say goodbye to the paper notebook.',alt:'A measuring tape, notebook and sewing tools'},
+    {src:'slides/slide-customer.svg',tag:'Made for tailors',title:'The perfect fit starts with a measurement',sub:'Keep every customer\'s measurements one tap away.',alt:'A tailor taking a customer\'s measurements'},
+    {src:'slides/slide-receipts.svg',tag:'Payments',title:'Get paid and stay organised',sub:'Record payments and send receipts in seconds.',alt:'A phone showing a payment receipt'},
+    {src:'slides/slide-studio.svg',tag:'Your studio',title:'Create with style',sub:'From fabric to finished outfit, all in one place.',alt:'A tailor sewing in a bright studio'},
+    {src:'slides/slide-delivery.svg',tag:'On-time delivery',title:'Delivered on time, loved on sight',sub:'Delivery reminders keep every order on schedule.',alt:'Tailored outfits ready for delivery'}
   ];
   const ss={slides:[],index:0,timer:null,sig:'',paused:false,failed:new Set(),startX:null,bound:false};
 

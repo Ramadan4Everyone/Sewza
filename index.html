@@ -84,8 +84,14 @@
      <button aria-label="Theme settings" class="icon-btn" id="themeQuickBtn" title="Theme settings">
       ◐
      </button>
-     <button aria-label="Install SEWZA" class="icon-btn install-app-btn" id="installAppBtn" title="Install SEWZA" hidden>
-      ⇩
+     <button aria-label="Install SEWZA app" class="install-app-btn" id="installAppBtn" title="Install SEWZA" type="button" hidden>
+      <span class="iab-glow" aria-hidden="true"></span>
+      <span class="iab-ring" aria-hidden="true"></span>
+      <span class="iab-body">
+       <svg class="iab-ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="iab-arrow" d="M12 3v11M7.5 10l4.5 4.5 4.5-4.5"/><path d="M5 20h14"/></svg>
+       <span class="iab-label">Install</span>
+      </span>
+      <span class="iab-shine" aria-hidden="true"></span>
      </button>
      <button aria-label="Open profile" class="profile-chip" id="profileBtn" title="Profile settings">
       <span class="avatar" id="profileAvatarTop">S</span>
@@ -1068,6 +1074,12 @@
         <div class="tone-list" id="toneList"></div>
         <button class="primary-btn full" id="testToneBtn" type="button">▶ Test selected tone</button>
        </div>
+       <div class="panel push-settings" id="pushPanel">
+        <div class="panel-head"><div><h3>Phone notifications</h3><p>Get reminders on your phone, even when SEWZA is closed.</p></div><span class="help-icon">📲</span></div>
+        <div class="setting-row"><div><b>Notifications on this device</b><small id="pushStatus">Checking…</small></div><button class="toggle-btn" id="pushMasterToggle" type="button" aria-pressed="false" disabled><span></span><b>Off</b></button></div>
+        <div class="push-types push-off" id="pushTypes"></div>
+        <button class="ghost-btn full" id="pushTestBtn" type="button" hidden>🔔 Send a test notification</button>
+       </div>
        <div class="panel data-tools-card">
         <div class="panel-head"><div><h3>Data safety & backup</h3><p>Your records stay usable without internet. Export a backup before changing devices.</p></div><span class="help-icon">☁</span></div>
         <div class="offline-status-card"><span class="status-dot"></span><div><b data-offline-status>Local data ready</b><small>Offline-first storage is active on this device.</small></div></div>
@@ -1080,10 +1092,11 @@
          <details open><summary>What is SEWZA?</summary><p>SEWZA is a digital measurement book for tailors. It keeps customer details, measurements, notes and delivery dates organised in one simple place.</p></details>
          <details><summary>How do I add my first customer?</summary><p>Tap the gold <b>＋</b> button, type the customer's name, then add any measurements you have taken. Everything except the name is optional, so you can come back and add more later. Tap <b>Save</b> when you are done.</p></details>
          <details><summary>How do I record a payment or send a receipt?</summary><p>Open the customer, enter the order price, then use <b>Record payment</b> each time they pay. SEWZA works out the balance for you. While a balance is outstanding you can send a receipt or a friendly reminder on WhatsApp.</p></details>
-         <details><summary>How do I install SEWZA on my phone?</summary><p>On Android, tap the install icon at the top (or <b>Install</b> in your browser menu). On iPhone, open SEWZA in Safari, tap the <b>Share</b> button, then <b>Add to Home Screen</b>. It then opens like any other app and keeps working offline.</p></details>
+         <details><summary>How do I install SEWZA on my phone?</summary><p>On Android or desktop, tap the glowing <b>Install</b> button at the top (or <b>Install</b> in your browser menu). On iPhone, open SEWZA in Safari, tap the <b>Share</b> button, then <b>Add to Home Screen</b>. It then opens like any other app and keeps working offline.</p></details>
          <details><summary>Can I use it on my phone?</summary><p>Yes. SEWZA is designed to work on phones, tablets and desktop screens, with large touch-friendly controls on smaller screens.</p></details>
          <details><summary>Where are my customer records saved?</summary><p>SEWZA is offline-first. Records are saved locally so you can keep working without internet. Supabase can be connected later for secure account-based cloud sync.</p></details>
          <details><summary>Can I use inches and centimetres?</summary><p>Yes. Choose Inches or Centimetres before entering measurements. Each customer record remembers its selected unit. You can also add custom measurement fields.</p></details>
+         <details><summary>Will I get notifications when SEWZA is closed?</summary><p>Yes. Turn on <b>Phone notifications</b> in Help and allow notifications when your phone asks. SEWZA then sends delivery reminders, payment alerts, outstanding-balance reminders and announcements to your phone even when the app is not open. You can switch all notifications, or any single type, off at any time. On iPhone, install SEWZA to your Home Screen first.</p></details>
          <details><summary>How do delivery reminders work?</summary><p>Set a starting date and delivery date. Turn alarms on and SEWZA checks due orders while the app is open and can show a browser notification if permission is granted.</p></details>
          <details><summary>Can I change the colours?</summary><p>Yes. Open Appearance to choose any of the ten background themes or switch your text style.</p></details>
          <details><summary>Can I use my own ringtone file?</summary><p>The current version provides ten built-in emergency-style tones. A future version can support uploaded audio files and deeper device-level notification settings.</p></details>
@@ -1172,5 +1185,7 @@
   <script src="supabase-client.js"></script>
   <script src="app.js"></script>
   <script src="install.js"></script>
+  <script src="push-config.js"></script>
+  <script src="push.js"></script>
  </body>
 </html>

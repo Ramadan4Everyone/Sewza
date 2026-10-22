@@ -122,7 +122,7 @@ Offline mode is designed for an already signed-in user. A brand-new user cannot 
 - `CACHE_NAME` in `sw.js` is now `sewza-pwa-v3` so every device picks up the new files.
 
 ## v8 changes
-- **Dashboard slideshow:** auto-playing (swipe, arrows, dots; pauses on hover) mixing the built-in artwork in `` with your customers' photos and your profile picture. To add your own pictures, copy them into `` and list them in `CUSTOM_SLIDES` in `app.js`, e.g. `{src:'our-team.jpg', title:'Our team', sub:'Lagos studio'}`.
+- **Dashboard slideshow:** auto-playing (swipe, arrows, dots; pauses on hover) mixing the built-in artwork in `slides/` with your customers' photos and your profile picture. To add your own pictures, copy them into `slides/` and list them in `CUSTOM_SLIDES` in `app.js`, e.g. `{src:'slides/our-team.jpg', title:'Our team', sub:'Lagos studio'}`.
 - Only one **Add customer** button on the dashboard.
 - **All measurements are optional.** A customer can be saved with just a name.
 - **Customer photo is optional**, with a **Remove photo** button (also **Remove picture** for your profile picture).
@@ -131,7 +131,7 @@ Offline mode is designed for an already signed-in user. A brand-new user cannot 
 
 ## v9 changes — premium dashboard, onboarding, install prompt
 - **Cleaner, calmer dashboard:** a short welcome header, the slideshow, then the numbers, then two tidy columns (recent customers + quick actions, delivery reminders + owing list). Larger, easier-to-read text and generous spacing; on phones everything stacks in one column in the most useful order. All existing numbers, buttons and lists are still there.
-- **Slideshow shows SEWZA illustrations only** (six built-in pictures). Customer photos and your profile picture are never shown in it. To add your own illustrations, put the files in `` and list them in `CUSTOM_SLIDES` in `app.js`.
+- **Slideshow shows SEWZA illustrations only** (six built-in pictures). Customer photos and your profile picture are never shown in it. To add your own illustrations, put the files in `slides/` and list them in `CUSTOM_SLIDES` in `app.js`.
 - **Install prompt on the first visit:** a friendly "Install SEWZA" sheet appears once, the first time someone opens the site (Android/desktop Chrome: one tap installs; iPhone: simple Share → Add to Home Screen steps). "Not now" is remembered. The install icon in the top bar and the button in Help stay available. Nothing is shown inside an installed app.
 - **Guided tour for new users:** the first time a brand-new account opens its dashboard, a six-step tour explains adding customers, measurements, delivery reminders, payments and the tools. Existing users with saved customers are never interrupted. Replay it any time from **Help → Start the guided tour**.
 - **Getting started checklist** on the dashboard (add a customer, save measurements, set a delivery date, record a payment). It ticks itself off and disappears when everything is done, or when you press ×.

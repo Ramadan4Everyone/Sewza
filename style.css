@@ -1706,7 +1706,46 @@ body[data-theme="sewza"] .unit-row>span { color:var(--text); }
 @media(max-width:850px){.account-grid{grid-template-columns:1fr}.account-card,.account-side{padding:18px}}
 
 /* SEWZA PWA install control */
-.install-app-btn{position:relative}.install-app-btn:not([hidden]){display:grid;place-items:center}
+/* Glowing animated install button (web only; hidden inside the installed app) */
+.install-app-btn{--iab-a:var(--accent,#d8a84e);--iab-b:var(--accent-2,#f0cf7b);position:relative;isolation:isolate;border:0;padding:0;margin:0;background:none;cursor:pointer;border-radius:999px;font:inherit;color:#17110a;-webkit-tap-highlight-color:transparent;flex:0 0 auto;transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .3s;animation:iabIn .7s cubic-bezier(.2,.9,.25,1.2) both,iabFloat 3.6s ease-in-out 1s infinite}
+.install-app-btn[hidden]{display:none!important}
+.install-app-btn:not([hidden]){display:inline-grid;place-items:center}
+.install-app-btn .iab-glow{position:absolute;inset:-7px;border-radius:999px;z-index:-2;background:radial-gradient(closest-side,color-mix(in srgb,var(--iab-b) 70%,transparent),transparent 72%);filter:blur(9px);opacity:.75;animation:iabPulse 2.4s ease-in-out infinite}
+.install-app-btn .iab-ring{position:absolute;inset:-2px;border-radius:999px;z-index:-1;overflow:hidden}
+.install-app-btn .iab-ring::before{content:"";position:absolute;inset:-60%;background:conic-gradient(from 0deg,transparent 0 55%,var(--iab-b) 75%,#fff 85%,var(--iab-a) 92%,transparent 100%);animation:iabSpin 2.8s linear infinite}
+.install-app-btn .iab-body{position:relative;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 17px 0 13px;border-radius:999px;font-weight:800;font-size:13.5px;letter-spacing:.2px;background:linear-gradient(135deg,var(--iab-b),var(--iab-a) 60%,color-mix(in srgb,var(--iab-a) 82%,#000));box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 6px rgba(0,0,0,.14),0 8px 22px color-mix(in srgb,var(--iab-a) 45%,transparent);transition:box-shadow .3s,background-position .4s}
+.install-app-btn .iab-ico{display:block;flex:0 0 auto;filter:drop-shadow(0 1px 0 rgba(255,255,255,.35))}
+.install-app-btn .iab-arrow{animation:iabArrow 1.7s ease-in-out infinite}
+.install-app-btn .iab-label{display:block;line-height:1}
+.install-app-btn .iab-shine{position:absolute;inset:0;border-radius:999px;overflow:hidden;pointer-events:none}
+.install-app-btn .iab-shine::before{content:"";position:absolute;top:-20%;bottom:-20%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:iabShine 3.4s ease-in-out 1.2s infinite}
+.install-app-btn:hover{transform:translateY(-2px) scale(1.05);filter:saturate(1.1)}
+.install-app-btn:hover .iab-glow{opacity:1;animation-duration:1.4s}
+.install-app-btn:hover .iab-body{box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 6px rgba(0,0,0,.14),0 12px 30px color-mix(in srgb,var(--iab-a) 65%,transparent)}
+.install-app-btn:hover .iab-arrow{animation-duration:.8s}
+.install-app-btn:active{transform:translateY(0) scale(.96);transition-duration:.12s}
+.install-app-btn:focus-visible{outline:3px solid color-mix(in srgb,var(--iab-b) 80%,#fff);outline-offset:4px}
+@keyframes iabIn{from{opacity:0;transform:translateY(-8px) scale(.6)}to{opacity:1;transform:none}}
+@keyframes iabFloat{0%,100%{translate:0 0}50%{translate:0 -2px}}
+@keyframes iabPulse{0%,100%{transform:scale(.92);opacity:.5}50%{transform:scale(1.12);opacity:.9}}
+@keyframes iabSpin{to{transform:rotate(360deg)}}
+@keyframes iabArrow{0%,100%{transform:translateY(-1.5px)}50%{transform:translateY(2.5px)}}
+@keyframes iabShine{0%,55%{left:-60%}100%{left:130%}}
+@media(max-width:760px){
+  .install-app-btn .iab-body{height:34px;padding:0 13px 0 10px;font-size:12.5px;gap:5px}
+  .install-app-btn .iab-ico{width:16px;height:16px}
+}
+@media(max-width:360px){
+  .install-app-btn .iab-body{padding:0 10px 0 8px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .install-app-btn,.install-app-btn .iab-glow,.install-app-btn .iab-ring::before,.install-app-btn .iab-arrow,.install-app-btn .iab-shine::before{animation:none!important}
+  .install-app-btn .iab-ring{display:none}
+}
+/* never show inside the installed app */
+@media(display-mode:standalone),(display-mode:fullscreen),(display-mode:minimal-ui),(display-mode:window-controls-overlay){
+  .install-app-btn,#helpInstallBtn{display:none!important}
+}
 @media(max-width:760px){
   body{padding-bottom:env(safe-area-inset-bottom)}
   .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -2878,3 +2917,19 @@ body.grp-lock{overflow:hidden}
  .pf-savebar .primary-btn{width:100%}
 }
 @media(max-width:400px){.pf-work{grid-template-columns:78px minmax(0,1fr)}.pf-link-pre{font-size:11px}}
+
+
+/* SEWZA phone notifications panel */
+.push-settings .push-types{display:grid;margin:2px 0 12px;transition:opacity .3s}
+.push-settings .push-types:empty{display:none}
+.push-settings .push-types.push-off{opacity:.5}
+.push-settings .push-types .setting-row:last-child{border-bottom:0}
+.push-settings .push-type b{font-size:12.5px}
+.push-settings .toggle-btn{cursor:pointer;transition:background .25s,border-color .25s}
+.push-settings .toggle-btn.on{border-color:color-mix(in srgb,var(--green) 45%,var(--line));background:color-mix(in srgb,var(--green) 10%,var(--input))}
+.push-settings .toggle-btn span{transition:transform .25s,background .25s}
+.push-settings .toggle-btn:disabled{opacity:.55;cursor:not-allowed}
+.push-settings .toggle-btn.is-busy{animation:pushBusy 1s ease-in-out infinite}
+.push-settings #pushStatus{line-height:1.5;max-width:46ch}
+@keyframes pushBusy{50%{opacity:.5}}
+@media(prefers-reduced-motion:reduce){.push-settings .toggle-btn,.push-settings .toggle-btn span,.push-settings .push-types{transition:none}.push-settings .toggle-btn.is-busy{animation:none}}

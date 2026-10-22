@@ -10,11 +10,20 @@
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
+  var justInstalled = false;
+  // True when SEWZA is running as the installed app (not in a normal browser tab).
   function isStandalone() {
     try {
-      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-        window.navigator.standalone === true;
-    } catch (e) { return false; }
+      if (window.navigator.standalone === true) return true;
+      if (document.referrer && document.referrer.indexOf('android-app://') === 0) return true;
+      if (window.matchMedia) {
+        var modes = ['standalone', 'fullscreen', 'minimal-ui', 'window-controls-overlay'];
+        for (var i = 0; i < modes.length; i++) {
+          if (window.matchMedia('(display-mode: ' + modes[i] + ')').matches) return true;
+        }
+      }
+    } catch (e) {}
+    return false;
   }
   function isIOS() {
     var ua = navigator.userAgent || '';
@@ -27,21 +36,33 @@
     if (hidden) el.setAttribute('hidden', ''); else el.removeAttribute('hidden');
   }
   function refreshButtons() {
-    var can = !isStandalone() && (hasNativePrompt() || isIOS());
+    // Always offered on the web; only hidden inside the installed app.
+    var can = !isStandalone() && !justInstalled;
     setHidden(installBtn, !can);
     setHidden(helpBtn, !can);
   }
 
+  var IOS_STEPS = '<li><span>1</span><div>Tap the <b>Share</b> button <i class="ios-share" aria-hidden="true"></i> in Safari.</div></li>' +
+    '<li><span>2</span><div>Scroll down and tap <b>Add to Home Screen</b>.</div></li>' +
+    '<li><span>3</span><div>Tap <b>Add</b>. SEWZA now lives on your home screen.</div></li>';
+  var MANUAL_STEPS = '<li><span>1</span><div>Open your browser menu (<b>\u22EE</b> or <b>\u22EF</b>, or the address bar icon).</div></li>' +
+    '<li><span>2</span><div>Choose <b>Install SEWZA</b> or <b>Add to Home screen</b>.</div></li>' +
+    '<li><span>3</span><div>Confirm. SEWZA now opens like a real app.</div></li>';
+
   function openSheet(mode) {
     if (!sheet || isStandalone()) return;
     var ios = mode === 'ios';
-    setHidden(stepsEl, !ios);
+    var guide = ios || mode === 'manual';
+    if (stepsEl && guide) stepsEl.innerHTML = ios ? IOS_STEPS : MANUAL_STEPS;
+    setHidden(stepsEl, !guide);
     if (titleEl) titleEl.textContent = 'Install SEWZA';
     if (textEl) textEl.textContent = ios
       ? 'Add SEWZA to your home screen in three quick taps. It then opens like a real app and works offline.'
-      : 'Add SEWZA to your home screen. It opens like a real app, loads faster and keeps working offline.';
-    if (yesBtn) { yesBtn.textContent = ios ? 'Got it' : 'Install app'; yesBtn.dataset.mode = mode; }
-    if (laterBtn) setHidden(laterBtn, ios);
+      : mode === 'manual'
+        ? 'Your browser will install SEWZA from its menu. It then opens like a real app and works offline.'
+        : 'Add SEWZA to your home screen. It opens like a real app, loads faster and keeps working offline.';
+    if (yesBtn) { yesBtn.textContent = guide ? 'Got it' : 'Install app'; yesBtn.dataset.mode = mode; }
+    if (laterBtn) setHidden(laterBtn, guide);
     sheet.classList.add('show');
     sheet.setAttribute('aria-hidden', 'false');
     shownThisPage = true;
@@ -96,6 +117,7 @@
     function manualInstall() {
       if (hasNativePrompt()) runNativeInstall();
       else if (isIOS()) openSheet('ios');
+      else openSheet('manual');
     }
     if (installBtn) installBtn.addEventListener('click', manualInstall);
     if (helpBtn) helpBtn.addEventListener('click', manualInstall);
@@ -115,6 +137,7 @@
     });
     window.addEventListener('appinstalled', function () {
       window.__sewzaInstallPrompt = null;
+      justInstalled = true;
       closeSheet();
       lsSet(SEEN_KEY, String(Date.now()));
       refreshButtons();

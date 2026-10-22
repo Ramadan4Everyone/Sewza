@@ -1,12 +1,12 @@
-const CACHE_NAME = 'sewza-pwa-v9';
+const CACHE_NAME = 'sewza-pwa-v11';
 const RUNTIME_CACHE = 'sewza-runtime-v1';
 const SUPABASE_LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const APP_SHELL = [
   './', './index.html', './style.css', './app.js', './manifest.webmanifest',
   './sewza-logo.png', './sewza-mark.png', './sewza-wordmark.png', './migrate.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png',
-  './sewza-fabric-hero.svg', './supabase-config.js', './supabase-client.js', './install.js', './portfolio.html', './portfolio.css', './portfolio.js',
-  './slide-fitting.svg', './slide-customer.svg', './slide-studio.svg', './slide-delivery.svg',
-  './slide-measure.svg', './slide-receipts.svg'
+  './sewza-fabric-hero.svg', './supabase-config.js', './supabase-client.js', './install.js', './push-config.js', './push.js', './badge-96.png', './portfolio.html', './portfolio.css', './portfolio.js',
+  './slides/slide-fitting.svg', './slides/slide-customer.svg', './slides/slide-studio.svg', './slides/slide-delivery.svg',
+  './slides/slide-measure.svg', './slides/slide-receipts.svg'
 ];
 // Third-party files the app needs to start while offline.
 const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
@@ -77,4 +77,53 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     staleWhileRevalidate(request, CACHE_NAME).then(res => res || Response.error())
   );
+});
+
+/* ---------- Push notifications ---------- */
+self.addEventListener('push', event => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; }
+  catch (e) { data = { body: event.data ? event.data.text() : '' }; }
+  const title = data.title || 'SEWZA';
+  const body = data.body || '';
+  const options = {
+    body,
+    icon: './icon-192.png',
+    badge: './badge-96.png',
+    tag: data.tag || 'sewza',
+    data: { url: data.url || './index.html', type: data.type || '' },
+    lang: 'en'
+  };
+  event.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const focused = wins.find(w => w.visibilityState === 'visible' && w.focused);
+    // The app is open in front of the user: show an in-app message instead of a system banner.
+    if (focused && data.type !== 'announcement') {
+      wins.forEach(w => w.postMessage({ type: 'sewza-push', title, body }));
+      return;
+    }
+    await self.registration.showNotification(title, options);
+  })());
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const target = new URL((event.notification.data && event.notification.data.url) || './index.html', self.registration.scope).href;
+  event.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const w of wins) {
+      if (w.url.startsWith(self.registration.scope) && 'focus' in w) return w.focus();
+    }
+    if (self.clients.openWindow) return self.clients.openWindow(target);
+  })());
+});
+
+// If the browser rotates the push subscription, renew it; the app re-registers it with the server on next open.
+self.addEventListener('pushsubscriptionchange', event => {
+  event.waitUntil((async () => {
+    try {
+      const opts = event.oldSubscription && event.oldSubscription.options;
+      if (opts) await self.registration.pushManager.subscribe(opts);
+    } catch (e) { /* the app will offer to turn notifications on again */ }
+  })());
 });
