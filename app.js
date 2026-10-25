@@ -812,6 +812,11 @@
     const dashboardTitle=$('#view-dashboard h1');
     if(profileName)profileName.textContent=display;
     if(avatar){ if(profile?.avatar_url){avatar.innerHTML=`<img src="${escapeHTML(profile.avatar_url)}" alt=""/>`;} else avatar.textContent=initial; }
+    { // mirror the profile picture + email into the main menu
+      const mAv=$('#menuAvatar'), mEm=$('#menuEmail');
+      if(mAv){ if(profile?.avatar_url){mAv.innerHTML=`<img src="${escapeHTML(profile.avatar_url)}" alt=""/>`;} else mAv.textContent=initial; }
+      if(mEm)mEm.textContent=user.email||'';
+    }
     if(dashboardTitle)dashboardTitle.textContent=`${isNewAccount()?'Welcome':'Welcome back'}, ${display}.`;
     try{ renderSlideshow(); }catch(e){ console.warn('SEWZA slideshow skipped:',e); }
   }

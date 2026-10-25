@@ -1,10 +1,10 @@
-const CACHE_NAME = 'sewza-pwa-v11';
+const CACHE_NAME = 'sewza-pwa-v12';
 const RUNTIME_CACHE = 'sewza-runtime-v1';
 const SUPABASE_LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const APP_SHELL = [
   './', './index.html', './style.css', './app.js', './manifest.webmanifest',
   './sewza-logo.png', './sewza-mark.png', './sewza-wordmark.png', './migrate.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png',
-  './sewza-fabric-hero.svg', './supabase-config.js', './supabase-client.js', './install.js', './push-config.js', './push.js', './badge-96.png', './portfolio.html', './portfolio.css', './portfolio.js',
+  './sewza-fabric-hero.svg', './supabase-config.js', './supabase-client.js', './install.js', './menu.js', './push-config.js', './push.js', './badge-96.png', './portfolio.html', './portfolio.css', './portfolio.js',
   './slides/slide-fitting.svg', './slides/slide-customer.svg', './slides/slide-studio.svg', './slides/slide-delivery.svg',
   './slides/slide-measure.svg', './slides/slide-receipts.svg'
 ];
