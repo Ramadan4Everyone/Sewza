@@ -962,6 +962,7 @@
         <span class="pf-status" id="pfStatus" data-state="new">Not set up</span>
        </div>
        <div class="pf-notice" id="pfNotice" role="status" hidden></div>
+       <div class="pf-notice pf2-upgrade" id="pfUpgrade" role="status" hidden></div>
 
        <div class="pf-share" id="pfShare">
         <div class="pf-share-top"><b>Your public link</b><span class="pf-views" id="pfViews" hidden></span></div>
@@ -975,41 +976,153 @@
         <small class="pf-hint" id="pfShareHint">Save and publish your portfolio to start sharing.</small>
        </div>
 
-       <div class="pf-block">
-        <div class="section-title"><span>01</span><div><h3>Your business</h3><p>This is the first thing customers see on your page.</p></div></div>
-        <div class="pf-logo-row">
-         <div class="pf-logo" id="pfLogo" aria-label="Business logo preview">S</div>
-         <div class="pf-logo-actions">
-          <label class="ghost-btn pf-file">Upload logo<input id="pfLogoInput" type="file" accept="image/*" hidden></label>
-          <button class="photo-remove" id="pfLogoRemove" type="button" hidden>Remove logo</button>
-          <small class="pf-hint">A square picture works best.</small>
+       <div class="pf2-setup" id="pfSetup">
+        <div class="pf2-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle class="pf2-r-track" cx="22" cy="22" r="19"/><circle class="pf2-r-bar" id="pfRingFg" cx="22" cy="22" r="19"/></svg><b id="pfRingPct">0%</b></div>
+        <div class="pf2-setup-copy"><b id="pfSetupTitle">Let’s set up your page</b><small id="pfSetupSub">Finish these steps to make your page shine.</small><div class="pf2-todo" id="pfTodo"></div></div>
+       </div>
+
+       <div class="pf2-tabs" id="pfTabs" role="tablist" aria-label="Portfolio settings">
+        <button type="button" role="tab" class="pf2-tab" id="pfTab-profile" data-pf-tab="profile" aria-selected="true" aria-controls="pfPane-profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.800 7 5.400"/></svg><span>Profile</span></button>
+        <button type="button" role="tab" class="pf2-tab" id="pfTab-design" data-pf-tab="design" aria-selected="false" aria-controls="pfPane-design" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.400 0 2-1 1.600-2.100-.4-1.100.1-2.200 1.400-2.200H17a4 4 0 0 0 4-4C21 6.800 17 3 12 3z"/><circle cx="7.500" cy="11" r="1"/><circle cx="10.500" cy="7" r="1"/><circle cx="15" cy="7.500" r="1"/></svg><span>Look &amp; feel</span></button>
+        <button type="button" role="tab" class="pf2-tab" id="pfTab-work" data-pf-tab="work" aria-selected="false" aria-controls="pfPane-work" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.500" y="4.500" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.800"/><path d="m4 17 5-4.500 3.500 3 3-2.500 4.500 4"/></svg><span>Work photos</span></button>
+        <button type="button" role="tab" class="pf2-tab" id="pfTab-services" data-pf-tab="services" aria-selected="false" aria-controls="pfPane-services" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h9"/></svg><span>Services &amp; info</span></button>
+        <button type="button" role="tab" class="pf2-tab" id="pfTab-reviews" data-pf-tab="reviews" aria-selected="false" aria-controls="pfPane-reviews" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.500l2.600 5.400 5.900.8-4.300 4.100 1.100 5.900L12 16.900 6.700 19.700l1.100-5.900L3.500 9.700l5.900-.8z"/></svg><span>Reviews</span><i class="pf2-badge" id="pfRvBadge" hidden>0</i></button>
+       </div>
+
+       <!-- TAB: PROFILE -->
+       <div class="pf2-pane" id="pfPane-profile" data-pf-pane="profile" role="tabpanel" aria-labelledby="pfTab-profile">
+        <div class="pf-block">
+         <div class="section-title"><span>01</span><div><h3>Your business</h3><p>This is the first thing customers see on your page.</p></div></div>
+         <div class="pf-logo-row">
+          <div class="pf-logo" id="pfLogo" aria-label="Business logo preview">S</div>
+          <div class="pf-logo-actions">
+           <label class="ghost-btn pf-file">Upload logo<input id="pfLogoInput" type="file" accept="image/*" hidden></label>
+           <button class="photo-remove" id="pfLogoRemove" type="button" hidden>Remove logo</button>
+           <small class="pf-hint">A square picture works best.</small>
+          </div>
+         </div>
+         <div class="field-grid two pf-fields">
+          <label>Business name<input id="pfName" type="text" maxlength="80" autocomplete="organization" placeholder="e.g. Ada Couture"></label>
+          <label>Location<input id="pfLocation" type="text" maxlength="100" autocomplete="off" placeholder="e.g. Surulere, Lagos"></label>
+          <label>WhatsApp number<input id="pfWhatsapp" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="e.g. 0803 123 4567"></label>
+          <label>Short tagline<input id="pfTagline" type="text" maxlength="120" autocomplete="off" placeholder="e.g. Native wear &amp; gowns made to fit you"></label>
+          <label class="pf-wide">About your business<textarea id="pfAbout" rows="4" maxlength="900" placeholder="Tell customers who you are, how long you have been sewing and what makes your work special."></textarea></label>
          </div>
         </div>
-        <div class="field-grid two pf-fields">
-         <label>Business name<input id="pfName" type="text" maxlength="80" autocomplete="organization" placeholder="e.g. Ada Couture"></label>
-         <label>Location<input id="pfLocation" type="text" maxlength="100" autocomplete="off" placeholder="e.g. Surulere, Lagos"></label>
-         <label>WhatsApp number<input id="pfWhatsapp" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="e.g. 0803 123 4567"></label>
-         <label>Short tagline<input id="pfTagline" type="text" maxlength="120" autocomplete="off" placeholder="e.g. Native wear & gowns made to fit you"></label>
-         <label class="pf-wide">About your business<textarea id="pfAbout" rows="4" maxlength="900" placeholder="Tell customers who you are, how long you have been sewing and what makes your work special."></textarea></label>
+
+        <div class="pf-block">
+         <div class="section-title"><span>02</span><div><h3>Specialties</h3><p>What you make best. Add up to 10.</p></div></div>
+         <div class="pf-spec-add"><input id="pfSpecInput" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Aso-ebi, Agbada, Wedding gowns" aria-label="Add a specialty"><button class="ghost-btn" id="pfSpecAdd" type="button">Add</button></div>
+         <div class="pf-chips" id="pfSpecList" aria-live="polite"></div>
+         <div class="pf-suggest" id="pfSpecSuggest" aria-label="Suggested specialties"></div>
+        </div>
+
+        <div class="pf-block">
+         <div class="section-title"><span>03</span><div><h3>Social media</h3><p>Optional. Type @yourname or paste the link.</p></div></div>
+         <div class="field-grid two pf-fields" id="pfSocials"></div>
         </div>
        </div>
 
-       <div class="pf-block">
-        <div class="section-title"><span>02</span><div><h3>Specialties</h3><p>What you make best. Add up to 10.</p></div></div>
-        <div class="pf-spec-add"><input id="pfSpecInput" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Aso-ebi, Agbada, Wedding gowns" aria-label="Add a specialty"><button class="ghost-btn" id="pfSpecAdd" type="button">Add</button></div>
-        <div class="pf-chips" id="pfSpecList" aria-live="polite"></div>
-        <div class="pf-suggest" id="pfSpecSuggest" aria-label="Suggested specialties"></div>
+       <!-- TAB: LOOK & FEEL -->
+       <div class="pf2-pane" id="pfPane-design" data-pf-pane="design" role="tabpanel" aria-labelledby="pfTab-design" hidden>
+        <div class="pf2-live" id="pfLive" aria-label="Live preview of your page style">
+         <div class="pf2-live-bg"></div>
+         <div class="pf2-live-in">
+          <span class="pf2-live-logo" id="pfLiveLogo">S</span>
+          <small>TAILOR &amp; FASHION DESIGNER</small>
+          <b id="pfLiveName">Your business</b>
+          <em id="pfLiveTag">Your tagline appears here</em>
+          <span class="pf2-live-btn"><i></i>Order on WhatsApp</span>
+         </div>
+         <span class="pf2-live-wa" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>01</span><div><h3>Colour theme</h3><p>Pick the colours that match your brand. Your page changes to match.</p></div></div>
+          <div class="pf2-themes" id="pfThemes" role="radiogroup" aria-label="Colour theme"></div>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>02</span><div><h3>Heading style</h3><p>The lettering used for your name and titles.</p></div></div>
+          <div class="pf2-fonts" id="pfFonts" role="radiogroup" aria-label="Heading style"></div>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>03</span><div><h3>Hero photo</h3><p>The big picture at the top of your page. A wide, bright photo of your best outfit or your shop works best.</p></div></div>
+          <div class="pf2-hero" id="pfHero">
+           <div class="pf2-hero-img" id="pfHeroImg"><span>No hero photo yet</span></div>
+           <div class="pf2-hero-actions">
+            <label class="ghost-btn pf-file">Upload hero photo<input id="pfHeroInput" type="file" accept="image/*" hidden></label>
+            <button class="photo-remove" id="pfHeroRemove" type="button" hidden>Remove hero photo</button>
+            <small class="pf-hint">Without one, we automatically use your first work photo.</small>
+           </div>
+          </div>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>04</span><div><h3>Slideshow &amp; announcement</h3><p>Show off your best work and share news with every visitor.</p></div></div>
+          <label class="pf2-toggle"><input id="pfSlideOn" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf2-toggle-copy"><b>Show a slideshow of my work</b><small>Star ★ photos in the Work photos tab to choose which appear. Otherwise your first 8 are used.</small></span></label>
+          <label class="pf2-toggle"><input id="pfSlideAuto" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf2-toggle-copy"><b>Play automatically</b><small>Slides change by themselves. Visitors can pause them.</small></span></label>
+          <div class="field-grid pf-fields"><label>Announcement bar (optional)<input id="pfBanner" type="text" maxlength="140" autocomplete="off" placeholder="e.g. Now taking December orders. Book early!"></label></div>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>05</span><div><h3>WhatsApp chat button</h3><p>A bouncing WhatsApp icon stays on the screen so customers can message you in one tap.</p></div></div>
+          <label class="pf2-toggle"><input id="pfChatOn" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf2-toggle-copy"><b>Show the floating chat button</b><small>Needs your WhatsApp number. If off, a simple order bar is used instead.</small></span></label>
+          <div class="field-grid two pf-fields">
+           <label>Pop-up greeting<input id="pfChatBubble" type="text" maxlength="40" autocomplete="off" placeholder="Hi 👋 Chat with us on WhatsApp"></label>
+           <label>First message customers send<input id="pfChatMsg" type="text" maxlength="160" autocomplete="off" placeholder="Hello, I found your portfolio and would like to order."></label>
+          </div>
+         </div>
+         <div class="pf-block">
+          <div class="section-title"><span>06</span><div><h3>Page sections</h3><p>Choose what to show on your page.</p></div></div>
+          <label class="pf2-toggle"><input id="pfShowSteps" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf2-toggle-copy"><b>“How to order” steps</b><small>Three simple steps that guide new customers.</small></span></label>
+          <label class="pf2-toggle"><input id="pfShowReviews" type="checkbox"><span class="pf-switch" aria-hidden="true"></span><span class="pf2-toggle-copy"><b>Customer reviews &amp; ratings</b><small>Customers write them. You approve, reply or hide them.</small></span></label>
+         </div>
        </div>
 
-       <div class="pf-block">
-        <div class="section-title"><span>03</span><div><h3>Social media</h3><p>Optional. Type @yourname or paste the link.</p></div></div>
-        <div class="field-grid two pf-fields" id="pfSocials"></div>
+       <!-- TAB: WORK PHOTOS -->
+       <div class="pf2-pane" id="pfPane-work" data-pf-pane="work" role="tabpanel" aria-labelledby="pfTab-work" hidden>
+        <div class="pf-block">
+         <div class="section-title"><span>01</span><div><h3>Work photos</h3><p>Upload your finished clothes. Your first photos appear at the top of your page. Tap ★ on a photo to feature it in the slideshow.</p></div></div>
+         <label class="pf-drop" id="pfDrop"><input id="pfWorkInput" type="file" accept="image/*" multiple hidden><span class="pf-drop-ico" aria-hidden="true">＋</span><b>Add photos of your work</b><small id="pfDropHint">Up to 60 photos. They are made smaller automatically.</small></label>
+         <div class="pf-works" id="pfWorks"></div>
+        </div>
        </div>
 
-       <div class="pf-block">
-        <div class="section-title"><span>04</span><div><h3>Work photos</h3><p>Upload your finished clothes. Your first photos appear at the top of your page.</p></div></div>
-        <label class="pf-drop" id="pfDrop"><input id="pfWorkInput" type="file" accept="image/*" multiple hidden><span class="pf-drop-ico" aria-hidden="true">＋</span><b>Add photos of your work</b><small id="pfDropHint">Up to 60 photos. They are made smaller automatically.</small></label>
-        <div class="pf-works" id="pfWorks"></div>
+       <!-- TAB: SERVICES & INFO -->
+       <div class="pf2-pane" id="pfPane-services" data-pf-pane="services" role="tabpanel" aria-labelledby="pfTab-services" hidden>
+        <div class="pf-block">
+         <div class="section-title"><span>01</span><div><h3>Services &amp; prices</h3><p>List what you sew with a starting price. Customers can tap Enquire to message you about it.</p></div></div>
+         <div class="pf2-rows" id="pfSvcList"></div>
+         <div class="pf-suggest" id="pfSvcSuggest" aria-label="Suggested services"></div>
+         <button class="ghost-btn pf2-add" id="pfSvcAdd" type="button">+ Add a service</button>
+        </div>
+        <div class="pf-block">
+         <div class="section-title"><span>02</span><div><h3>Questions customers ask</h3><p>Answer the common ones so you spend less time repeating yourself.</p></div></div>
+         <div class="pf2-rows" id="pfFaqList"></div>
+         <div class="pf-suggest" id="pfFaqSuggest" aria-label="Suggested questions"></div>
+         <button class="ghost-btn pf2-add" id="pfFaqAdd" type="button">+ Add a question</button>
+        </div>
+        <div class="pf-block">
+         <div class="section-title"><span>03</span><div><h3>Opening hours &amp; map</h3><p>Optional. Shown in the contact section.</p></div></div>
+         <div class="field-grid two pf-fields">
+          <label class="pf-wide">Opening hours<textarea id="pfHours" rows="3" maxlength="200" placeholder="Mon – Sat: 9am – 6pm&#10;Sunday: Closed"></textarea></label>
+          <label class="pf-wide">Google Maps link (optional)<input id="pfMapUrl" type="text" inputmode="url" maxlength="300" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Paste your shop’s Google Maps link"></label>
+         </div>
+        </div>
+       </div>
+
+       <!-- TAB: REVIEWS -->
+       <div class="pf2-pane" id="pfPane-reviews" data-pf-pane="reviews" role="tabpanel" aria-labelledby="pfTab-reviews" hidden>
+        <div class="pf-block">
+         <div class="section-title"><span>01</span><div><h3>Customer reviews</h3><p>Only your customers can write reviews. You decide which ones appear, and you can reply. You can never write or edit a review.</p></div></div>
+         <div class="pf2-rv-top">
+          <div class="pf2-rv-sum" id="pfRvSum"></div>
+          <div class="pf2-rv-invite">
+           <b>Ask happy customers for a review</b>
+           <small>Send them a link. They rate you in under a minute.</small>
+           <div class="pf2-rv-invite-btns"><button class="primary-btn pf-wa" id="pfRvInvite" type="button" disabled>Send on WhatsApp</button><button class="ghost-btn" id="pfRvCopy" type="button" disabled>Copy link</button></div>
+          </div>
+         </div>
+         <div class="pf2-rv-bar"><div class="pf2-filters" id="pfRvFilters" role="group" aria-label="Filter reviews"></div><button class="ghost-btn" id="pfRvRefresh" type="button">Refresh</button></div>
+         <div class="pf2-rv-list" id="pfRvList" aria-live="polite"></div>
+        </div>
        </div>
 
        <div class="pf-savebar">

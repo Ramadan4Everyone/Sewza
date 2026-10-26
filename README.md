@@ -161,3 +161,20 @@ Offline mode is designed for an already signed-in user. A brand-new user cannot 
 - **New opening animation:** woven ivory cloth, drifting gold dust, a gold stitch-ring sewn around the logo by a travelling needle, a gold satin sheen across the logo and lettering, and a running-stitch bar that keeps sewing until the workspace is ready. It is pure CSS (no libraries), respects *reduce motion*, and ends with a small flourish before fading away. Its length is `BOOT_MIN_MS` at the top of `app.js`.
 - **Rename details for developers:** the Supabase config global is now `window.SEWZA_SUPABASE_CONFIG` (in `supabase-config.js`), the client bridge is `window.SEWZA_SUPABASE`, the app API is `window.SEWZA`, and the theme id is `sewza`. If you host a separate copy of `supabase-config.js`, update it to the new variable name.
 - `CACHE_NAME` in `sw.js` is now `sewza-pwa-v9`; the old caches are removed automatically. Devices open the new version on the second launch after you deploy (the first launch refreshes the cache in the background).
+
+## v14 — Premium portfolio website + new portfolio settings
+
+**Run once in Supabase → SQL Editor** (after `SUPABASE_PORTFOLIO_MIGRATION.sql`): `SUPABASE_PORTFOLIO_UPGRADE_MIGRATION.sql`. It only adds things (page settings + customer reviews). If you have not run it yet, everything that worked before still works; the app shows a short reminder and saves the older fields normally.
+
+**Public page (`portfolio.html`, `portfolio.css`, `portfolio.js`)**
+- Full-screen hero with your own hero photo (or your first work photo), sticky navigation, optional announcement bar, rating chip and animated count-up numbers.
+- Cinematic featured slideshow (autoplay, swipe, arrows, keyboard, pause button, progress bar, opens full-screen).
+- Collection with category filters, "show more", full-screen viewer and "Ask about this design" on WhatsApp.
+- About story, specialties ribbon, services with starting prices and an Enquire button, how-to-order steps, FAQ, opening hours, map link and contact cards.
+- **Customer reviews & ratings:** only customers can write a review (through the public form). New reviews wait for your approval; you can approve, hide, reply or delete, but can never write or edit a review. Star average and breakdown are shown on the page.
+- **Floating WhatsApp button** with entrance animation, pulsing rings, wiggle and a pop-up greeting. If switched off, the old sticky order bar is used instead.
+- 8 colour themes and 3 heading styles. Portfolios saved before this update look exactly as before (Emerald & Gold, Classic).
+
+**Settings (Profile → Your tailor portfolio)**
+- Setup progress ring with tap-to-fix steps, and five tabs: Profile, Look & feel (colours, heading style, hero photo, slideshow, announcement, chat button, sections, live preview), Work photos (★ to feature in the slideshow), Services & info (services, FAQ, hours, map) and Reviews (approve / hide / reply / delete, plus a WhatsApp button to ask customers for reviews: `portfolio.html?t=your-link#review`).
+- `CACHE_NAME` in `sw.js` is now `sewza-pwa-v13`.

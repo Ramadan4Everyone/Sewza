@@ -2440,10 +2440,41 @@
   const PF_SOCIALS=[['instagram','Instagram','@yourname'],['tiktok','TikTok','@yourname'],['facebook','Facebook','page name or link'],['twitter','X (Twitter)','@yourname'],['youtube','YouTube','@channel or link'],['website','Website','www.yourwebsite.com']];
   const PF_SUGGEST=['Aso-ebi','Wedding gowns','Agbada','Native wear','Corset dresses','Kaftan','Men’s suits','Kids wear','School uniforms','Lace outfits','Ankara styles','Alterations'];
   const PF_CATS=['Native wear','Gowns','Aso-ebi','Wedding','Men’s wear','Women’s wear','Kids','Corporate','Uniforms'];
-  let pf={uid:null,loaded:false,loading:null,dirty:false,saving:false,busyPhotos:false,saved:null,form:null,slugTimer:null,slugSeq:0,notice:''};
+  const PF_MAX_SVC=10, PF_MAX_FAQ=10;
+  const PF_THEMES=[
+    {id:'emerald',name:'Emerald & Gold',c:['#04382b','#064e3b','#0f766e','#d4af37']},
+    {id:'royal',name:'Royal Navy',c:['#091633','#11285c','#2349a8','#d4af37']},
+    {id:'rose',name:'Rose Gold',c:['#4a1830','#86254f','#bf3f6e','#d99a85']},
+    {id:'plum',name:'Plum & Champagne',c:['#24093f','#46198a','#6d34c4','#e0b84a']},
+    {id:'noir',name:'Noir & Gold',c:['#09090b','#16161a','#2e2e38','#c9a227']},
+    {id:'terracotta',name:'Terracotta',c:['#351405','#7a2c10','#b24f1f','#d6b58c']},
+    {id:'burgundy',name:'Burgundy',c:['#330814','#651225','#9a2438','#d4af37']},
+    {id:'ocean',name:'Ocean & Coral',c:['#052a33','#0a4b5c','#0e7f92','#f0a58b']}
+  ];
+  const PF_FONTS=[{id:'classic',name:'Classic',ff:'"Playfair Display",Georgia,serif'},{id:'luxe',name:'Luxe',ff:'"Cormorant Garamond","Playfair Display",Georgia,serif'},{id:'modern',name:'Modern',ff:'"Syne","Manrope",system-ui,sans-serif'}];
+  const PF_SVC_SUGGEST=['Custom outfits','Wedding gowns','Aso-ebi sets','Native wear','Men’s suits','Kids wear','Alterations'];
+  const PF_FAQ_SUGGEST=['How long does an outfit take?','Do you deliver?','How much deposit do I pay?','Can you copy a style from a photo?'];
+  const PF_TABS=['profile','design','work','services','reviews'];
+  let pf={uid:null,loaded:false,loading:null,dirty:false,saving:false,busyPhotos:false,saved:null,form:null,slugTimer:null,slugSeq:0,notice:'',tab:'profile',noSettings:false};
+  let pfRv={loaded:false,loading:false,items:[],missing:false,error:'',filter:'all',busy:''};
 
   function pfBlank(){
-    return {slug:'',slugTouched:false,business_name:'',tagline:'',about:'',location:'',whatsapp:'',logo:'',specialties:[],socials:{},works:[],published:false,views:0};
+    return {slug:'',slugTouched:false,business_name:'',tagline:'',about:'',location:'',whatsapp:'',logo:'',specialties:[],socials:{},works:[],published:false,views:0,settings:pfDefaultSettings()};
+  }
+  function pfDefaultSettings(){
+    return {theme:'emerald',font:'classic',hero:{image:''},slideshow:{on:true,auto:true},chat:{on:true,msg:'',bubble:''},banner:'',services:[],faqs:[],hours:'',mapUrl:'',show:{steps:true,reviews:true}};
+  }
+  function pfNormSettings(raw){
+    const s=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{}, o=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
+    const hero=o(s.hero), sw=o(s.slideshow), ch=o(s.chat), sh=o(s.show), t=x=>String(x==null?'':x);
+    return {
+      theme:PF_THEMES.some(x=>x.id===s.theme)?s.theme:'emerald', font:PF_FONTS.some(x=>x.id===s.font)?s.font:'classic',
+      hero:{image:pfIsCloud(hero.image)?hero.image:''}, slideshow:{on:sw.on!==false,auto:sw.auto!==false},
+      chat:{on:ch.on!==false,msg:t(ch.msg).slice(0,160),bubble:t(ch.bubble).slice(0,40)}, banner:t(s.banner).slice(0,140),
+      services:(Array.isArray(s.services)?s.services:[]).filter(x=>x&&typeof x==='object').slice(0,PF_MAX_SVC).map(x=>({id:t(x.id)||uid('s'),name:t(x.name).slice(0,60),price:t(x.price).slice(0,30),desc:t(x.desc).slice(0,160)})),
+      faqs:(Array.isArray(s.faqs)?s.faqs:[]).filter(x=>x&&typeof x==='object').slice(0,PF_MAX_FAQ).map(x=>({id:t(x.id)||uid('q'),q:t(x.q).slice(0,120),a:t(x.a).slice(0,400)})),
+      hours:t(s.hours).slice(0,200), mapUrl:t(s.mapUrl).slice(0,300), show:{steps:sh.steps!==false,reviews:sh.reviews!==false}
+    };
   }
   function pfSlugify(t){
     return String(t||'').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40).replace(/-+$/,'');
@@ -2458,8 +2489,8 @@
     return {slug:String(r.slug||''),slugTouched:true,business_name:String(r.business_name||''),tagline:String(r.tagline||''),about:String(r.about||''),location:String(r.location||''),
       whatsapp:String(r.whatsapp||''),logo:pfIsCloud(r.logo_url)?r.logo_url:'',specialties:(Array.isArray(r.specialties)?r.specialties:[]).map(x=>String(x)).filter(Boolean).slice(0,PF_MAX_SPEC),
       socials:Object.fromEntries(PF_SOCIALS.map(s=>[s[0],String(soc[s[0]]||'')]).filter(x=>x[1])),
-      works:(Array.isArray(r.works)?r.works:[]).filter(w=>w&&pfIsCloud(w.url)).slice(0,PF_MAX_WORKS).map(w=>({id:String(w.id||uid('w')),url:w.url,title:String(w.title||''),category:String(w.category||''),caption:String(w.caption||'')})),
-      published:!!r.published,views:Number(r.views)||0};
+      works:(Array.isArray(r.works)?r.works:[]).filter(w=>w&&pfIsCloud(w.url)).slice(0,PF_MAX_WORKS).map(w=>({id:String(w.id||uid('w')),url:w.url,title:String(w.title||''),category:String(w.category||''),caption:String(w.caption||''),featured:w.featured===true})),
+      published:!!r.published,views:Number(r.views)||0,settings:pfNormSettings(r.settings)};
   }
   function pfSocialUrl(key,raw){
     const v=String(raw||'').trim(); if(!v) return '';
@@ -2485,11 +2516,12 @@
     else if(pf.saved){ if(pf.saved.published){ state='live'; text='Live'; } else { state='draft'; text='Saved · not published'; } }
     el.dataset.state=state; el.textContent=text;
     const live=!!(pf.saved&&pf.saved.published);
-    ['#pfShareWa','#pfCopy','#pfPreview'].forEach(s=>{ const b=$(s); if(b) b.disabled=!(pf.saved&&live); });
+    ['#pfShareWa','#pfCopy','#pfPreview','#pfRvInvite','#pfRvCopy'].forEach(s=>{ const b=$(s); if(b) b.disabled=!(pf.saved&&live); });
     const hint=$('#pfShareHint');
     if(hint) hint.textContent=!pf.saved?'Save and publish your portfolio to start sharing.':!live?'Your portfolio is saved but hidden. Turn on “Publish my portfolio” and save to share it.':(pf.dirty?'You have unsaved changes. Save them so customers see the latest version.':'Your portfolio is live. Send the link to customers on WhatsApp.');
     const v=$('#pfViews'); if(v){ const n=pf.form?.views||0; v.hidden=!(pf.saved&&live); v.textContent=`${n} ${n===1?'visit':'visits'}`; }
     const ph=$('#pfPublishHint'); const pub=$('#pfPublished'); if(ph&&pub) ph.textContent=pub.checked?'Anyone with your link can see it.':'Hidden. Only you can see it for now.';
+    pfRenderProgress(); pfRenderLive();
   }
   function pfRenderLink(){
     const pre=$('#pfLinkPre'); if(pre){ try{ const u=new URL('portfolio.html',location.href); pre.textContent=u.host+u.pathname.replace(/[^/]*$/,'')+'portfolio.html?t='; }catch{ pre.textContent='portfolio.html?t='; } }
@@ -2516,9 +2548,9 @@
         <input type="text" data-wf="title" maxlength="70" placeholder="Design name" value="${escapeHTML(w.title)}" aria-label="Name of design ${i+1}">
         <input type="text" data-wf="category" maxlength="40" list="pfCatList" placeholder="Category e.g. Gowns" value="${escapeHTML(w.category)}" aria-label="Category of design ${i+1}">
         <textarea data-wf="caption" maxlength="240" rows="2" placeholder="Short note (optional)" aria-label="Note for design ${i+1}">${escapeHTML(w.caption)}</textarea>
-        <div class="pf-work-tools"><button type="button" data-pf-act="first" ${i===0?'disabled':''} title="Show first on your page" aria-label="Move design ${i+1} to the front">⤒ First</button><button type="button" data-pf-act="left" ${i===0?'disabled':''} aria-label="Move design ${i+1} earlier">←</button><button type="button" data-pf-act="right" ${i===f.works.length-1?'disabled':''} aria-label="Move design ${i+1} later">→</button><button type="button" class="pf-del" data-pf-act="del" aria-label="Delete design ${i+1}">Delete</button></div>
+        <div class="pf-work-tools"><button type="button" data-pf-act="first" ${i===0?'disabled':''} title="Show first on your page" aria-label="Move design ${i+1} to the front">⤒ First</button><button type="button" class="pf2-star${w.featured?' on':''}" data-pf-act="star" aria-pressed="${w.featured?'true':'false'}" title="Feature in the slideshow" aria-label="Feature design ${i+1} in the slideshow">★</button><button type="button" data-pf-act="left" ${i===0?'disabled':''} aria-label="Move design ${i+1} earlier">←</button><button type="button" data-pf-act="right" ${i===f.works.length-1?'disabled':''} aria-label="Move design ${i+1} later">→</button><button type="button" class="pf-del" data-pf-act="del" aria-label="Delete design ${i+1}">Delete</button></div>
       </div></div>`).join('')+(f.works.length?`<datalist id="pfCatList">${PF_CATS.map(c=>`<option value="${escapeHTML(c)}"></option>`).join('')}</datalist>`:'');
-    const hint=$('#pfDropHint'); if(hint) hint.textContent=f.works.length>=PF_MAX_WORKS?`You have reached the limit of ${PF_MAX_WORKS} photos.`:`${f.works.length} of ${PF_MAX_WORKS} photos added. They are made smaller automatically.`;
+    const hint=$('#pfDropHint'); if(hint) hint.textContent=f.works.length>=PF_MAX_WORKS?`You have reached the limit of ${PF_MAX_WORKS} photos.`:`${f.works.length} of ${PF_MAX_WORKS} photos added. They are made smaller automatically.${f.works.some(x=>x.featured)?` ${f.works.filter(x=>x.featured).length} starred for the slideshow.`:''}`;
   }
   function pfRenderSocials(){
     const box=$('#pfSocials'); if(!box) return;
@@ -2533,7 +2565,7 @@
     const set=(id,v)=>{ const e=$(id); if(e) e.value=v; };
     set('#pfName',f.business_name); set('#pfLocation',f.location); set('#pfWhatsapp',f.whatsapp?(/^\d+$/.test(f.whatsapp)?'+'+f.whatsapp:f.whatsapp):''); set('#pfTagline',f.tagline); set('#pfAbout',f.about); set('#pfSlug',f.slug);
     const p=$('#pfPublished'); if(p) p.checked=!!f.published;
-    pfRenderLink(); pfRenderLogo(); pfRenderSpecs(); pfRenderWorks(); pfRenderSocials(); pfRenderStatus(); pfSlugHint('');
+    pfRenderLink(); pfRenderLogo(); pfRenderSpecs(); pfRenderWorks(); pfRenderSocials(); pfRenderDesign(); pfRenderRows(); pfRenderReviews(); pfRenderUpgrade(); pfRenderStatus(); pfSlugHint('');
   }
   function pfSlugHint(msg,kind){
     const h=$('#pfSlugHint'); if(!h) return;
@@ -2555,7 +2587,7 @@
   async function pfEnsure(force){
     if(!currentUser) return;
     const uidNow=currentUser.id;
-    if(pf.uid!==uidNow){ pf={uid:uidNow,loaded:false,loading:null,dirty:false,saving:false,busyPhotos:false,saved:null,form:pfPrefill(pfBlank()),slugTimer:null,slugSeq:0,notice:''}; pfFillForm(); }
+    if(pf.uid!==uidNow){ pf={uid:uidNow,loaded:false,loading:null,dirty:false,saving:false,busyPhotos:false,saved:null,form:pfPrefill(pfBlank()),slugTimer:null,slugSeq:0,notice:'',tab:pf.tab||'profile',noSettings:false}; pfRv={loaded:false,loading:false,items:[],missing:false,error:'',filter:'all',busy:''}; pfFillForm(); }
     if(pf.loading) return pf.loading;
     if(pf.loaded&&!force){ pfRenderStatus(); return; }
     const client=supabaseClient();
@@ -2566,10 +2598,11 @@
         const {data,error}=await client.from('tailor_portfolios').select('*').eq('user_id',uidNow).maybeSingle();
         if(error) throw error;
         if(!currentUser||currentUser.id!==uidNow||pf.uid!==uidNow) return;
-        if(data){ if(!pf.dirty){ pf.form=pfFromRow(data); } pf.saved={slug:data.slug,published:!!data.published}; pf.form.views=Number(data.views)||0; }
+        if(data){ if(!pf.dirty){ pf.form=pfFromRow(data); } pf.saved={slug:data.slug,published:!!data.published}; pf.form.views=Number(data.views)||0; pf.noSettings=!('settings' in data); }
         pf.loaded=true; pfNotice('');
         if(!data&&pf.form.slug) pfCheckSlug();
         pfFillForm();
+        if(data) pfLoadReviews().catch(()=>{});
       }catch(e){ console.warn('SEWZA portfolio load failed:',e); pfNotice(pfStatusFromError(e)); pfFillForm(); }
       finally{ pf.loading=null; panel?.classList.remove('pf-loading'); }
     })();
@@ -2610,7 +2643,7 @@
     try{
       for(let i=0;i<take.length;i++){
         const hint=$('#pfDropHint'); if(hint) hint.textContent=`Preparing photo ${i+1} of ${take.length}…`;
-        try{ f.works.push({id:uid('w'),url:await gsCompress(take[i],1400,.82),title:'',category:'',caption:''}); added++; }catch{ failed++; }
+        try{ f.works.push({id:uid('w'),url:await gsCompress(take[i],1400,.82),title:'',category:'',caption:'',featured:false}); added++; }catch{ failed++; }
       }
     } finally{ pf.busyPhotos=false; $('#pfDrop')?.classList.remove('busy'); }
     pfRenderWorks(); if(added) pfMarkDirty();
@@ -2650,6 +2683,8 @@
       const r=pfSocialUrl(s[0],f.socials[s[0]]); if(r===null){ showToast(`Check your ${s[1]} link`,'Type @yourname or paste the full link.'); $(`[data-pf-soc="${s[0]}"]`)?.focus(); return; }
       if(r) socials[s[0]]=r;
     }
+    const st=f.settings; let mapUrl='';
+    if(st.mapUrl.trim()){ const r=pfSocialUrl('website',st.mapUrl); if(r===null){ pfSetTab('services'); showToast('Check your map link','Paste the full Google Maps link.'); $('#pfMapUrl')?.focus(); return; } mapUrl=r; }
     const published=!!$('#pfPublished')?.checked;
     if(published){
       if(!wa){ showToast('WhatsApp number needed','Customers order through WhatsApp. Add your number before publishing.'); $('#pfWhatsapp')?.focus(); return; }
@@ -2660,7 +2695,7 @@
       // ---- link name must be free ----
       try{ const {data:free,error:fe}=await client.rpc('portfolio_slug_available',{p_slug:slug}); if(!fe&&free===false){ showToast('Link name taken','Choose a different link name.'); pfSlugHint('That link name is already taken. Try another one.','bad'); $('#pfSlug')?.focus(); return; } }catch{}
       // ---- upload new pictures (each one is kept as soon as it is uploaded, so a retry never repeats it) ----
-      const pending=f.works.filter(w=>w.url.startsWith('data:')).length+(f.logo.startsWith('data:')?1:0);
+      const pending=f.works.filter(w=>w.url.startsWith('data:')).length+(f.logo.startsWith('data:')?1:0)+(st.hero.image.startsWith('data:')?1:0);
       let done=0;
       const send=async(dataUrl,prefix)=>{
         done++; pfSetSaving(true,`Uploading ${done} of ${pending}… `);
@@ -2669,25 +2704,36 @@
         if(!url){ const err=new Error('upload failed'); err.pfUpload=true; throw err; } return url;
       };
       if(f.logo.startsWith('data:')) f.logo=await send(f.logo,'logo');
+      if(st.hero.image.startsWith('data:')) st.hero.image=await send(st.hero.image,'hero');
       for(const w of f.works){ if(w.url.startsWith('data:')) w.url=await send(w.url,'w'); }
       if(!currentUser||currentUser.id!==uidNow) return;
       pfSetSaving(true,'Saving… ');
       const row={user_id:uidNow,slug,business_name:name.slice(0,80),tagline:f.tagline.trim().slice(0,120),about:f.about.trim().slice(0,900),location:f.location.trim().slice(0,100),
         whatsapp:wa,logo_url:f.logo||null,socials,specialties:f.specialties.slice(0,PF_MAX_SPEC),
-        works:f.works.slice(0,PF_MAX_WORKS).map(w=>({id:w.id,url:w.url,title:w.title.trim().slice(0,70),category:w.category.trim().slice(0,40),caption:w.caption.trim().slice(0,240)})),
-        published,updated_at:new Date().toISOString()};
-      const {data,error}=await client.from('tailor_portfolios').upsert(row,{onConflict:'user_id'}).select().single();
+        works:f.works.slice(0,PF_MAX_WORKS).map(w=>({id:w.id,url:w.url,title:w.title.trim().slice(0,70),category:w.category.trim().slice(0,40),caption:w.caption.trim().slice(0,240),featured:!!w.featured})),
+        published,updated_at:new Date().toISOString(),settings:pfBuildSettings(st,mapUrl)};
+      let {data,error}=await client.from('tailor_portfolios').upsert(row,{onConflict:'user_id'}).select().single();
+      let settingsMissing=false;
+      if(error&&/settings|PGRST204|42703/.test(`${error.code||''} ${error.message||''}`)&&!isNetworkError(error)){
+        // The upgrade migration has not been run yet: still save everything that was already supported.
+        const {settings:_skip,...plain}=row; settingsMissing=true;
+        ({data,error}=await client.from('tailor_portfolios').upsert(plain,{onConflict:'user_id'}).select().single());
+      }
       if(error){
         if(error.code==='23505'){ showToast('Link name taken','Choose a different link name.'); pfSlugHint('That link name is already taken. Try another one.','bad'); return; }
         throw error;
       }
-      pf.form=pfFromRow(data); pf.saved={slug:data.slug,published:!!data.published}; pf.dirty=false; pf.loaded=true; pfNotice('');
+      const keepSettings=st;
+      pf.form=pfFromRow(data); if(settingsMissing) pf.form.settings=keepSettings;
+      pf.noSettings=settingsMissing||!('settings' in data);
+      pf.saved={slug:data.slug,published:!!data.published}; pf.dirty=false; pf.loaded=true; pfNotice('');
       pfFillForm();
-      showToast(published?'Your portfolio is live':'Portfolio saved',published?'Share your link with customers on WhatsApp.':'It is hidden until you publish it.');
-      pfCleanup(client,uidNow,[data.logo_url,...(data.works||[]).map(w=>w&&w.url)]);
+      if(settingsMissing) showToast('Saved without the new look','Run SUPABASE_PORTFOLIO_UPGRADE_MIGRATION.sql once in Supabase to save colours, hero photo and services.');
+      else showToast(published?'Your portfolio is live':'Portfolio saved',published?'Share your link with customers on WhatsApp.':'It is hidden until you publish it.');
+      pfCleanup(client,uidNow,[data.logo_url,pf.form.settings.hero.image,...(data.works||[]).map(w=>w&&w.url)]);
     }catch(e){
       console.error('SEWZA portfolio save failed:',e);
-      pfRenderWorks(); pfRenderLogo();
+      pfRenderWorks(); pfRenderLogo(); pfRenderDesign();
       if(isNetworkError(e)) showToast(INTERNET_FAILED,INTERNET_FAILED_HELP);
       else if(/42P01|PGRST205/.test(`${e?.code||''} ${e?.message||''}`)) showToast('Portfolio is not set up yet','Run SUPABASE_PORTFOLIO_MIGRATION.sql in your Supabase SQL Editor.');
       else if(e&&e.pfUpload) showToast('Photos were not sent','Your work is kept here. Check that SUPABASE_PORTFOLIO_MIGRATION.sql was run in Supabase, then press Save again.');
@@ -2707,7 +2753,221 @@
     }catch{ window.prompt('Copy your portfolio link:',url); }
   }
 
+  // ----- settings helpers (look & feel, services, reviews) -----
+  function pfBuildSettings(st,mapUrl){
+    return {theme:st.theme,font:st.font,hero:{image:st.hero.image||''},slideshow:{on:!!st.slideshow.on,auto:!!st.slideshow.auto},
+      chat:{on:!!st.chat.on,msg:st.chat.msg.trim().slice(0,160),bubble:st.chat.bubble.trim().slice(0,40)},banner:st.banner.trim().slice(0,140),
+      services:st.services.map(x=>({id:x.id,name:x.name.trim().slice(0,60),price:x.price.trim().slice(0,30),desc:x.desc.trim().slice(0,160)})).filter(x=>x.name).slice(0,PF_MAX_SVC),
+      faqs:st.faqs.map(x=>({id:x.id,q:x.q.trim().slice(0,120),a:x.a.trim().slice(0,400)})).filter(x=>x.q&&x.a).slice(0,PF_MAX_FAQ),
+      hours:st.hours.trim().slice(0,200),mapUrl:mapUrl||'',show:{steps:!!st.show.steps,reviews:!!st.show.reviews}};
+  }
+  function pfLoadFonts(){
+    if(pfLoadFonts.done) return; pfLoadFonts.done=true;
+    try{ const l=document.createElement('link'); l.rel='stylesheet'; l.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Syne:wght@700;800&display=swap'; document.head.appendChild(l); }catch{}
+  }
+  function pfRenderUpgrade(){
+    const el=$('#pfUpgrade'); if(!el) return;
+    const need=(pf.loaded&&pf.noSettings)||pfRv.missing;
+    el.hidden=!need;
+    el.textContent=need?'To unlock colours, the hero photo, services and customer reviews, run SUPABASE_PORTFOLIO_UPGRADE_MIGRATION.sql once in your Supabase SQL Editor, then reopen this page. Everything else keeps working.':'';
+  }
+
+  // ----- tabs -----
+  function pfSetTab(name,focusSel){
+    if(!PF_TABS.includes(name)) name='profile'; pf.tab=name;
+    PF_TABS.forEach(t=>{
+      const on=t===name, b=$(`#pfTab-${t}`), pane=$(`#pfPane-${t}`);
+      if(b){ b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1; }
+      if(pane) pane.hidden=!on;
+    });
+    if(name==='design'){ pfLoadFonts(); pfRenderDesign(); }
+    if(name==='reviews'){ pfLoadReviews().catch(()=>{}); }
+    const active=$(`#pfTab-${name}`); active?.scrollIntoView?.({block:'nearest',inline:'center'});
+    if(focusSel){ setTimeout(()=>{ const t=$(focusSel); if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); if(/^(INPUT|TEXTAREA|BUTTON)$/.test(t.tagName)) t.focus({preventScroll:true}); t.classList.add('pf2-flash'); setTimeout(()=>t.classList.remove('pf2-flash'),1500); } },60); }
+  }
+
+  // ----- setup progress -----
+  function pfChecklist(){
+    const f=pf.form; if(!f) return [];
+    const s=f.settings;
+    return [
+      {t:'Business name',ok:!!f.business_name.trim(),tab:'profile',sel:'#pfName'},
+      {t:'WhatsApp number',ok:!!pfWaDigits(f.whatsapp.trim()),tab:'profile',sel:'#pfWhatsapp'},
+      {t:'Logo',ok:!!f.logo,tab:'profile',sel:'#pfLogo'},
+      {t:'About you',ok:f.about.trim().length>=20,tab:'profile',sel:'#pfAbout'},
+      {t:'3 work photos',ok:f.works.length>=3,tab:'work',sel:'#pfDrop'},
+      {t:'Hero photo',ok:!!s.hero.image,tab:'design',sel:'#pfHero'},
+      {t:'A service & price',ok:s.services.some(x=>x.name.trim()),tab:'services',sel:'#pfSvcAdd'},
+      {t:'Publish your page',ok:!!(pf.saved&&pf.saved.published),tab:'profile',sel:'#pfPublished'}
+    ];
+  }
+  function pfRenderProgress(){
+    const box=$('#pfSetup'); if(!box||!pf.form) return;
+    const list=pfChecklist(), done=list.filter(x=>x.ok).length, pct=Math.round(done/list.length*100);
+    const fg=$('#pfRingFg'); if(fg) fg.style.strokeDashoffset=String(119.38*(1-pct/100));
+    const pe=$('#pfRingPct'); if(pe) pe.textContent=pct+'%';
+    box.classList.toggle('done',pct===100);
+    const title=$('#pfSetupTitle'), sub=$('#pfSetupSub');
+    if(title) title.textContent=pct===100?'Your portfolio is complete':pct>=60?'Looking good, almost there':pct>0?'Nice start, keep going':'Let’s set up your page';
+    if(sub) sub.textContent=pct===100?'Customers will love what they see. Share your link!':`${done} of ${list.length} steps done. Tap a step to finish it.`;
+    const todo=$('#pfTodo'); if(todo) todo.innerHTML=list.map((x,i)=>x.ok?'':`<button type="button" class="pf2-todo-chip" data-pf-goto="${i}">+ ${escapeHTML(x.t)}</button>`).join('');
+  }
+
+  // ----- look & feel -----
+  function pfRenderLive(){
+    const live=$('#pfLive'), f=pf.form; if(!live||!f) return;
+    const th=PF_THEMES.find(x=>x.id===f.settings.theme)||PF_THEMES[0], fo=PF_FONTS.find(x=>x.id===f.settings.font)||PF_FONTS[0];
+    live.style.setProperty('--n',th.c[0]); live.style.setProperty('--d',th.c[1]); live.style.setProperty('--m',th.c[2]); live.style.setProperty('--g',th.c[3]); live.style.setProperty('--ff',fo.ff);
+    const nm=$('#pfLiveName'); if(nm) nm.textContent=f.business_name.trim()||'Your business';
+    const tg=$('#pfLiveTag'); if(tg) tg.textContent=f.tagline.trim()||'Your tagline appears here';
+    const lg=$('#pfLiveLogo'); if(lg){ if(f.logo){ lg.style.backgroundImage=`url("${f.logo}")`; lg.textContent=''; lg.classList.add('has'); } else { lg.style.backgroundImage=''; lg.classList.remove('has'); lg.textContent=(f.business_name.trim()||'S').charAt(0).toUpperCase(); } }
+    const bg=live.querySelector('.pf2-live-bg'); if(bg){ const img=f.settings.hero.image||(f.works[0]&&f.works[0].url)||''; bg.style.backgroundImage=img?`url("${img}")`:''; }
+    const wa=live.querySelector('.pf2-live-wa'); if(wa) wa.hidden=!f.settings.chat.on;
+  }
+  function pfRenderDesign(){
+    const f=pf.form; if(!f) return; const s=f.settings;
+    const th=$('#pfThemes'); if(th) th.innerHTML=PF_THEMES.map(t=>`<button type="button" class="pf2-theme${t.id===s.theme?' on':''}" role="radio" aria-checked="${t.id===s.theme}" data-pf-theme="${t.id}" style="--a:${t.c[0]};--b:${t.c[1]};--c:${t.c[2]};--d:${t.c[3]}"><span class="pf2-sw" aria-hidden="true"><i></i><i></i><i></i></span><b>${escapeHTML(t.name)}</b><em aria-hidden="true">✓</em></button>`).join('');
+    const fo=$('#pfFonts'); if(fo) fo.innerHTML=PF_FONTS.map(x=>`<button type="button" class="pf2-font${x.id===s.font?' on':''}" role="radio" aria-checked="${x.id===s.font}" data-pf-font="${x.id}" style="--ff:${x.ff}"><span aria-hidden="true">Aa</span><b>${escapeHTML(x.name)}</b></button>`).join('');
+    const hi=$('#pfHeroImg'); if(hi){ hi.style.backgroundImage=s.hero.image?`url("${s.hero.image}")`:''; hi.classList.toggle('has',!!s.hero.image); }
+    const hr=$('#pfHeroRemove'); if(hr) hr.hidden=!s.hero.image;
+    const chk=(id,v)=>{ const e=$(id); if(e) e.checked=!!v; }, val=(id,v)=>{ const e=$(id); if(e&&e!==document.activeElement) e.value=v; };
+    chk('#pfSlideOn',s.slideshow.on); chk('#pfSlideAuto',s.slideshow.auto); chk('#pfChatOn',s.chat.on); chk('#pfShowSteps',s.show.steps); chk('#pfShowReviews',s.show.reviews);
+    val('#pfBanner',s.banner); val('#pfChatBubble',s.chat.bubble); val('#pfChatMsg',s.chat.msg); val('#pfHours',s.hours); val('#pfMapUrl',s.mapUrl);
+    const sa=$('#pfSlideAuto'); if(sa) sa.disabled=!s.slideshow.on;
+    pfRenderLive();
+  }
+  async function pfSetHero(file){
+    try{ pf.form.settings.hero.image=await gsCompress(file,1920,.82); pfRenderDesign(); pfMarkDirty(); }
+    catch{ showToast('Could not read that picture','Try a JPG or PNG picture.'); }
+  }
+
+  // ----- services + questions -----
+  function pfRenderRows(){
+    const f=pf.form; if(!f) return; const s=f.settings;
+    const sl=$('#pfSvcList'); if(sl) sl.innerHTML=s.services.map((x,i)=>`<div class="pf2-row" data-rid="${escapeHTML(x.id)}"><span class="pf2-row-n">${i+1}</span><div class="pf2-row-body"><div class="pf2-row-top"><input data-rf="name" type="text" maxlength="60" autocomplete="off" placeholder="Service e.g. Wedding gowns" value="${escapeHTML(x.name)}" aria-label="Service ${i+1} name"><input data-rf="price" type="text" maxlength="30" autocomplete="off" placeholder="From e.g. ₦25,000" value="${escapeHTML(x.price)}" aria-label="Service ${i+1} starting price"></div><input data-rf="desc" type="text" maxlength="160" autocomplete="off" placeholder="Short description (optional)" value="${escapeHTML(x.desc)}" aria-label="Service ${i+1} description"></div><div class="pf2-row-tools"><button type="button" data-pf-row="up" ${i===0?'disabled':''} aria-label="Move service ${i+1} up">↑</button><button type="button" data-pf-row="down" ${i===s.services.length-1?'disabled':''} aria-label="Move service ${i+1} down">↓</button><button type="button" class="pf-del" data-pf-row="del" aria-label="Delete service ${i+1}">✕</button></div></div>`).join('');
+    const fl=$('#pfFaqList'); if(fl) fl.innerHTML=s.faqs.map((x,i)=>`<div class="pf2-row" data-rid="${escapeHTML(x.id)}"><span class="pf2-row-n">${i+1}</span><div class="pf2-row-body"><input data-rf="q" type="text" maxlength="120" autocomplete="off" placeholder="Question e.g. How long does it take?" value="${escapeHTML(x.q)}" aria-label="Question ${i+1}"><textarea data-rf="a" rows="2" maxlength="400" placeholder="Your answer" aria-label="Answer ${i+1}">${escapeHTML(x.a)}</textarea></div><div class="pf2-row-tools"><button type="button" data-pf-row="up" ${i===0?'disabled':''} aria-label="Move question ${i+1} up">↑</button><button type="button" data-pf-row="down" ${i===s.faqs.length-1?'disabled':''} aria-label="Move question ${i+1} down">↓</button><button type="button" class="pf-del" data-pf-row="del" aria-label="Delete question ${i+1}">✕</button></div></div>`).join('');
+    const have=new Set(s.services.map(x=>x.name.trim().toLowerCase())), ss=$('#pfSvcSuggest');
+    if(ss) ss.innerHTML=s.services.length>=PF_MAX_SVC?'':PF_SVC_SUGGEST.filter(x=>!have.has(x.toLowerCase())).slice(0,6).map(x=>`<button type="button" class="pf-sug" data-pf-svc-sug="${escapeHTML(x)}">+ ${escapeHTML(x)}</button>`).join('');
+    const haveQ=new Set(s.faqs.map(x=>x.q.trim().toLowerCase())), fs=$('#pfFaqSuggest');
+    if(fs) fs.innerHTML=s.faqs.length>=PF_MAX_FAQ?'':PF_FAQ_SUGGEST.filter(x=>!haveQ.has(x.toLowerCase())).map(x=>`<button type="button" class="pf-sug" data-pf-faq-sug="${escapeHTML(x)}">+ ${escapeHTML(x)}</button>`).join('');
+    const a1=$('#pfSvcAdd'); if(a1) a1.disabled=s.services.length>=PF_MAX_SVC;
+    const a2=$('#pfFaqAdd'); if(a2) a2.disabled=s.faqs.length>=PF_MAX_FAQ;
+  }
+
+  // ----- customer reviews (customers write them; the tailor can only approve, hide, reply or delete) -----
+  const pfStars=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+  function pfRvDate(iso){ const d=new Date(iso); return isNaN(d.getTime())?'':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}); }
+  async function pfLoadReviews(){
+    if(!currentUser||pfRv.loading) return;
+    const client=supabaseClient(); if(!client||!navigator.onLine){ pfRv.error=`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`; pfRenderReviews(); return; }
+    const uidNow=currentUser.id; pfRv.loading=true; pfRenderReviews();
+    try{
+      const {data,error}=await client.from('portfolio_reviews').select('id,reviewer_name,rating,comment,status,owner_reply,created_at').eq('portfolio_user_id',uidNow).order('created_at',{ascending:false}).limit(200);
+      if(error) throw error;
+      if(!currentUser||currentUser.id!==uidNow) return;
+      pfRv.items=(data||[]).map(r=>({...r,draft:r.owner_reply||''})); pfRv.missing=false; pfRv.error=''; pfRv.loaded=true;
+    }catch(e){
+      if(/42P01|PGRST205|portfolio_reviews/i.test(`${e?.code||''} ${e?.message||''}`)&&!isNetworkError(e)){ pfRv.missing=true; pfRv.error=''; }
+      else pfRv.error=isNetworkError(e)?`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`:'Could not load your reviews. Please try again.';
+    }finally{ pfRv.loading=false; pfRenderReviews(); pfRenderUpgrade(); }
+  }
+  function pfRenderReviews(){
+    const list=$('#pfRvList'); if(!list) return;
+    const items=pfRv.items, pend=items.filter(x=>x.status==='pending').length, appr=items.filter(x=>x.status==='approved');
+    const badge=$('#pfRvBadge'); if(badge){ badge.hidden=!pend; badge.textContent=String(pend); }
+    const avg=appr.length?appr.reduce((n,x)=>n+x.rating,0)/appr.length:0;
+    const sum=$('#pfRvSum'); if(sum) sum.innerHTML=`<div class="pf2-rv-avg"><b>${appr.length?avg.toFixed(1):'–'}</b><span class="pf2-rv-stars" aria-hidden="true">${pfStars(Math.round(avg))}</span></div><div class="pf2-rv-counts"><span><b>${appr.length}</b> showing</span><span class="${pend?'hot':''}"><b>${pend}</b> waiting</span><span><b>${items.filter(x=>x.status==='hidden').length}</b> hidden</span></div>`;
+    const fl=$('#pfRvFilters'); if(fl) fl.innerHTML=[['all','All'],['pending','Waiting'],['approved','Showing'],['hidden','Hidden']].map(([k,l])=>`<button type="button" class="pf2-fchip${pfRv.filter===k?' on':''}" data-pf-rvf="${k}" aria-pressed="${pfRv.filter===k}">${l}</button>`).join('');
+    const rb=$('#pfRvRefresh'); if(rb) rb.disabled=pfRv.loading;
+    if(pfRv.missing){ list.innerHTML='<div class="pf2-empty"><b>Reviews are not switched on yet</b>Run SUPABASE_PORTFOLIO_UPGRADE_MIGRATION.sql once in your Supabase SQL Editor, then press Refresh.</div>'; return; }
+    if(pfRv.loading&&!pfRv.loaded){ list.innerHTML='<div class="pf2-empty">Loading your reviews…</div>'; return; }
+    if(pfRv.error&&!pfRv.loaded){ list.innerHTML=`<div class="pf2-empty"><b>${escapeHTML(pfRv.error)}</b>Press Refresh to try again.</div>`; return; }
+    const shownItems=items.filter(x=>pfRv.filter==='all'||x.status===pfRv.filter);
+    if(!shownItems.length){ list.innerHTML=`<div class="pf2-empty"><b>${items.length?'Nothing here':'No reviews yet'}</b>${items.length?'No reviews match this filter.':'Share your review link with happy customers. Their reviews will appear here for you to approve.'}</div>`; return; }
+    const lab={pending:'Waiting for you',approved:'Showing on your page',hidden:'Hidden'};
+    list.innerHTML=shownItems.map(x=>`<article class="pf2-rv" data-st="${escapeHTML(x.status)}" data-rvid="${escapeHTML(x.id)}"><header><span class="pf2-av" aria-hidden="true">${escapeHTML((x.reviewer_name||'?').charAt(0).toUpperCase())}</span><div><b>${escapeHTML(x.reviewer_name)}</b><small>${escapeHTML(pfRvDate(x.created_at))}</small></div><span class="pf2-rvstat">${lab[x.status]||escapeHTML(x.status)}</span></header><div class="pf2-rv-stars" role="img" aria-label="${x.rating} out of 5 stars">${pfStars(x.rating)}</div><p>${escapeHTML(x.comment||'(no comment)')}</p><label class="pf2-reply">Your reply (optional, shown under the review)<textarea data-rv-reply rows="2" maxlength="400" placeholder="Say thank you or answer a question">${escapeHTML(x.draft)}</textarea></label><div class="pf2-rv-act">${x.status==='approved'?'<button type="button" class="ghost-btn" data-pf-rv="hidden">Hide</button>':'<button type="button" class="primary-btn" data-pf-rv="approved">Approve</button>'}${x.status==='pending'?'<button type="button" class="ghost-btn" data-pf-rv="hidden">Hide</button>':''}<button type="button" class="ghost-btn" data-pf-rv="reply">Save reply</button><button type="button" class="ghost-btn pf2-danger" data-pf-rv="delete">Delete</button></div></article>`).join('');
+  }
+  async function pfReviewAction(id,act){
+    const client=supabaseClient(); const r=pfRv.items.find(x=>x.id===id); if(!client||!r||pfRv.busy) return;
+    if(!navigator.onLine){ showToast(INTERNET_FAILED,INTERNET_FAILED_HELP); return; }
+    if(act==='delete'&&!window.confirm('Delete this review for good? This cannot be undone.')) return;
+    pfRv.busy=id;
+    try{
+      let res;
+      if(act==='delete') res=await client.from('portfolio_reviews').delete().eq('id',id).select('id');
+      else if(act==='reply') res=await client.from('portfolio_reviews').update({owner_reply:r.draft.trim().slice(0,400)}).eq('id',id).select('id');
+      else res=await client.from('portfolio_reviews').update({status:act}).eq('id',id).select('id');
+      if(res.error) throw res.error;
+      if(!res.data||!res.data.length) throw new Error('not allowed');
+      if(act==='delete') pfRv.items=pfRv.items.filter(x=>x.id!==id);
+      else if(act==='reply'){ r.owner_reply=r.draft.trim().slice(0,400); r.draft=r.owner_reply; }
+      else r.status=act;
+      showToast(act==='approved'?'Review is now showing':act==='hidden'?'Review hidden':act==='delete'?'Review deleted':'Reply saved',act==='approved'?'Visitors can see it on your page.':act==='hidden'?'Visitors can no longer see it.':act==='delete'?'It has been removed.':'Visitors will see your reply.');
+    }catch(e){ console.warn('SEWZA review action failed:',e); showToast(isNetworkError(e)?INTERNET_FAILED:'Could not update the review',isNetworkError(e)?INTERNET_FAILED_HELP:'Please try again.'); }
+    finally{ pfRv.busy=''; pfRenderReviews(); }
+  }
+  function pfReviewLink(){ return pfShareUrl()?pfShareUrl()+'#review':''; }
+  function pfReviewText(){ const n=(pf.form&&pf.form.business_name)||'us'; return `Hello \u{1F44B} Thank you for choosing ${n}. Please take one minute to rate our work and tell others about your experience:\n${pfReviewLink()}`; }
+  async function pfCopyText(text,title,msg){
+    try{
+      if(navigator.clipboard&&window.isSecureContext) await navigator.clipboard.writeText(text);
+      else { const t=document.createElement('textarea'); t.value=text; t.setAttribute('readonly',''); t.style.cssText='position:fixed;opacity:0'; document.body.appendChild(t); t.select(); const ok=document.execCommand('copy'); document.body.removeChild(t); if(!ok) throw new Error('copy'); }
+      showToast(title,msg);
+    }catch{ window.prompt('Copy this link:',text); }
+  }
+
   // ----- events -----
+  function bindPortfolioSettings(){
+    const panel=$('#pfPanel'); if(!panel) return;
+    const st=()=>pf.form&&pf.form.settings;
+    // tabs
+    $('#pfTabs')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-tab]'); if(b) pfSetTab(b.dataset.pfTab); });
+    $('#pfTabs')?.addEventListener('keydown',e=>{
+      if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return;
+      e.preventDefault(); let i=PF_TABS.indexOf(pf.tab);
+      i=e.key==='Home'?0:e.key==='End'?PF_TABS.length-1:(i+(e.key==='ArrowRight'?1:-1)+PF_TABS.length)%PF_TABS.length;
+      pfSetTab(PF_TABS[i]); $(`#pfTab-${PF_TABS[i]}`)?.focus();
+    });
+    $('#pfTodo')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-goto]'); if(!b) return; const it=pfChecklist()[Number(b.dataset.pfGoto)]; if(it) pfSetTab(it.tab,it.sel); });
+    // look & feel
+    $('#pfThemes')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-theme]'); if(!b||!st()) return; st().theme=b.dataset.pfTheme; pfRenderDesign(); pfMarkDirty(); });
+    $('#pfFonts')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-font]'); if(!b||!st()) return; st().font=b.dataset.pfFont; pfRenderDesign(); pfMarkDirty(); });
+    $('#pfHeroInput')?.addEventListener('change',e=>{ const file=e.target.files?.[0]; if(file&&pf.form) pfSetHero(file).finally(()=>{ e.target.value=''; }); });
+    $('#pfHeroRemove')?.addEventListener('click',()=>{ if(!st()) return; st().hero.image=''; pfRenderDesign(); pfMarkDirty(); });
+    const tog=(id,fn)=>$(id)?.addEventListener('change',e=>{ if(!st()) return; fn(st(),e.target.checked); pfRenderDesign(); pfMarkDirty(); });
+    tog('#pfSlideOn',(s,v)=>{ s.slideshow.on=v; }); tog('#pfSlideAuto',(s,v)=>{ s.slideshow.auto=v; }); tog('#pfChatOn',(s,v)=>{ s.chat.on=v; });
+    tog('#pfShowSteps',(s,v)=>{ s.show.steps=v; }); tog('#pfShowReviews',(s,v)=>{ s.show.reviews=v; });
+    const txt=(id,fn)=>$(id)?.addEventListener('input',e=>{ if(!st()) return; fn(st(),e.target.value); pfMarkDirty(); });
+    txt('#pfBanner',(s,v)=>{ s.banner=v; }); txt('#pfChatBubble',(s,v)=>{ s.chat.bubble=v; }); txt('#pfChatMsg',(s,v)=>{ s.chat.msg=v; });
+    txt('#pfHours',(s,v)=>{ s.hours=v; }); txt('#pfMapUrl',(s,v)=>{ s.mapUrl=v; });
+    // services + questions
+    const listFor=el=>el.closest('#pfFaqList')?'faqs':'services';
+    const addSvc=name=>{ if(!st()||st().services.length>=PF_MAX_SVC) return; st().services.push({id:uid('s'),name:name||'',price:'',desc:''}); pfRenderRows(); pfMarkDirty(); if(!name){ const l=$$('#pfSvcList .pf2-row'); l[l.length-1]?.querySelector('input')?.focus(); } };
+    const addFaq=q=>{ if(!st()||st().faqs.length>=PF_MAX_FAQ) return; st().faqs.push({id:uid('q'),q:q||'',a:''}); pfRenderRows(); pfMarkDirty(); const l=$$('#pfFaqList .pf2-row'); const r=l[l.length-1]; (q?r?.querySelector('textarea'):r?.querySelector('input'))?.focus(); };
+    $('#pfSvcAdd')?.addEventListener('click',()=>addSvc(''));
+    $('#pfFaqAdd')?.addEventListener('click',()=>addFaq(''));
+    $('#pfSvcSuggest')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-svc-sug]'); if(b) addSvc(b.dataset.pfSvcSug); });
+    $('#pfFaqSuggest')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-faq-sug]'); if(b) addFaq(b.dataset.pfFaqSug); });
+    ['#pfSvcList','#pfFaqList'].forEach(sel=>{
+      const box=$(sel); if(!box) return;
+      box.addEventListener('input',e=>{ const k=e.target.dataset?.rf; if(!k||!st()) return; const id=e.target.closest('[data-rid]')?.dataset.rid; const it=st()[listFor(box)].find(x=>x.id===id); if(!it) return; it[k]=e.target.value; pfMarkDirty(); });
+      box.addEventListener('click',e=>{
+        const b=e.target.closest?.('[data-pf-row]'); if(!b||!st()) return; const id=b.closest('[data-rid]')?.dataset.rid; const arr=st()[listFor(box)]; const i=arr.findIndex(x=>x.id===id); if(i<0) return;
+        const a=b.dataset.pfRow;
+        if(a==='del') arr.splice(i,1); else if(a==='up'&&i>0) [arr[i-1],arr[i]]=[arr[i],arr[i-1]]; else if(a==='down'&&i<arr.length-1) [arr[i+1],arr[i]]=[arr[i],arr[i+1]]; else return;
+        pfRenderRows(); pfMarkDirty();
+      });
+    });
+    // reviews
+    $('#pfRvFilters')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-rvf]'); if(!b) return; pfRv.filter=b.dataset.pfRvf; pfRenderReviews(); });
+    $('#pfRvRefresh')?.addEventListener('click',()=>{ pfLoadReviews().catch(()=>{}); });
+    $('#pfRvList')?.addEventListener('input',e=>{ if(!e.target.matches?.('[data-rv-reply]')) return; const r=pfRv.items.find(x=>x.id===e.target.closest('[data-rvid]')?.dataset.rvid); if(r) r.draft=e.target.value; });
+    $('#pfRvList')?.addEventListener('click',e=>{ const b=e.target.closest?.('[data-pf-rv]'); if(!b) return; const id=b.closest('[data-rvid]')?.dataset.rvid; if(id) pfReviewAction(id,b.dataset.pfRv); });
+    $('#pfRvInvite')?.addEventListener('click',()=>{ const u=pfReviewLink(); if(u) window.open('https://wa.me/?text='+encodeURIComponent(pfReviewText()),'_blank','noopener'); });
+    $('#pfRvCopy')?.addEventListener('click',()=>{ const u=pfReviewLink(); if(u) pfCopyText(u,'Review link copied','Send it to customers who ordered from you.'); });
+    pfRenderProgress();
+  }
+
   function bindPortfolio(){
     const panel=$('#pfPanel'); if(!panel) return;
     const text=(id,key)=>$(id)?.addEventListener('input',e=>{ if(!pf.form) return; pf.form[key]=e.target.value; pfMarkDirty(); });
@@ -2741,6 +3001,7 @@
         const card=act.closest('[data-wid]'); const i=pf.form.works.findIndex(w=>w.id===card?.dataset.wid); if(i<0) return;
         const a=act.dataset.pfAct, w=pf.form.works;
         if(a==='del'){ w.splice(i,1); }
+        else if(a==='star'){ w[i].featured=!w[i].featured; }
         else if(a==='first'&&i>0){ w.unshift(w.splice(i,1)[0]); }
         else if(a==='left'&&i>0){ [w[i-1],w[i]]=[w[i],w[i-1]]; }
         else if(a==='right'&&i<w.length-1){ [w[i+1],w[i]]=[w[i],w[i+1]]; }
@@ -2773,6 +3034,7 @@
     }
   }
   bindPortfolio();
+  bindPortfolioSettings();
 
   gs=gsBlank();
 
