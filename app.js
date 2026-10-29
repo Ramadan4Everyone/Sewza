@@ -714,6 +714,8 @@
     $('#signupName')?.toggleAttribute('required',!!signUp);
     $('#signupBusiness')?.toggleAttribute('required',!!signUp);
     if(pass) pass.autocomplete=signUp?'new-password':'current-password';
+    const passLbl=$('#passLabelText'); if(passLbl) passLbl.textContent=signUp?'Create password':'Password';
+    if(pass) pass.placeholder=signUp?'Create a password (at least 6 characters)':'Enter your password';
 
     if(signUp){
       eyebrow.textContent='GET STARTED';
@@ -964,19 +966,269 @@
     }
   }
 
-  async function handleForgotPassword(){
+  // =====================================================================
+  // Password reset with a code: email -> code from Gmail -> new password
+  // =====================================================================
+  let rsHold=false;           // true from "code verified" until the new password is saved or cancelled
+  let rsStep=1, rsLen=6, rsTimer=null, rsBusy=false, rsEmailValue='';
+  const RS_COOLDOWN=60;
+
+  function rsMsg(text='',isError=false){
+    const el=$('#rsMessage'); if(!el)return;
+    el.textContent=networkSafeText(text);
+    el.classList.toggle('error',!!isError);
+    el.classList.toggle('success',!isError&&!!text);
+  }
+  function rsFriendly(error){
+    if(isNetworkError(error))return `${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`;
+    const msg=String(error?.message||'').toLowerCase();
+    const secs=msg.match(/(\d+)\s*second/);
+    if(secs&&(msg.includes('only request')||msg.includes('security purposes')))return `Please wait ${secs[1]} seconds before asking for another code.`;
+    if(msg.includes('rate limit')||msg.includes('too many'))return 'Too many attempts. Please wait a few minutes and try again.';
+    if(msg.includes('expired')||msg.includes('invalid'))return 'That code is not right or has expired. Check it and try again, or ask for a new one.';
+    if(msg.includes('same')&&msg.includes('password'))return 'Your new password must be different from your old one.';
+    if(msg.includes('password')&&(msg.includes('6')||msg.includes('weak')||msg.includes('short')))return 'Your password must be at least 6 characters.';
+    if(msg.includes('email'))return 'Please enter a valid email address.';
+    return error?.message||'Something went wrong. Please try again.';
+  }
+  function rsShowStep(n){
+    rsStep=n;
+    const card=$('#resetCard'); if(!card)return;
+    [...card.querySelectorAll('.rs-pane')].forEach(p=>{
+      const on=Number(p.dataset.step)===n;
+      p.hidden=!on;
+      if(on){ p.classList.remove('rs-in'); void p.offsetWidth; p.classList.add('rs-in'); }
+    });
+    const steps=$('#rsSteps'); if(steps){ steps.dataset.step=String(Math.min(n,3)); steps.classList.toggle('rs-all',n===4); }
+    rsMsg('');
+  }
+  function rsOpen(){
+    const login=$('#loginForm'),card=$('#resetCard'); if(!login||!card)return;
+    rsEmailValue=($('#loginEmail')?.value||'').trim().toLowerCase();
+    $('#rsEmail').value=rsEmailValue;
+    login.hidden=true; card.hidden=false;
+    rsBuildCode(6); rsClearPass(); rsShowStep(1);
+    setTimeout(()=>$('#rsEmail')?.focus(),150);
+  }
+  async function rsClose(){
     const client=supabaseClient();
-    const email=$('#loginEmail')?.value.trim().toLowerCase();
-    if(!client){setAuthMessage(navigator.onLine&&window.supabase?'SEWZA could not connect to Supabase.':`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
-    if(!email){setAuthMessage('Enter your email first, then choose "Forgot your password?".',true);$('#loginEmail')?.focus();return;}
+    clearInterval(rsTimer); rsTimer=null;
+    // A code that was verified created a temporary session: end it so the user must sign in normally.
+    if(rsHold&&client){ try{ await client.auth.signOut(); }catch{} }
+    rsHold=false; rsBusy=false;
+    const login=$('#loginForm'),card=$('#resetCard');
+    if(card)card.hidden=true; if(login)login.hidden=false;
+    if(rsEmailValue&&$('#loginEmail')&&!$('#loginEmail').value)$('#loginEmail').value=rsEmailValue;
+    setAuthMessage('');
+    setTimeout(()=>$('#loginEmail')?.focus(),120);
+  }
+  function rsClearPass(){
+    ['#rsNewPass','#rsNewPass2'].forEach(id=>{const i=$(id); if(i){i.value='';i.type='password';}});
+    $$('[data-rs-show]').forEach(b=>b.textContent='Show');
+    rsMeter(''); rsMatchCheck();
+  }
+  function rsCooldown(){
+    const btn=$('#rsResendBtn'); if(!btn)return;
+    clearInterval(rsTimer);
+    let left=RS_COOLDOWN; btn.disabled=true; btn.textContent=`Resend code in ${left}s`;
+    rsTimer=setInterval(()=>{
+      left--;
+      if(left<=0){clearInterval(rsTimer);rsTimer=null;btn.disabled=false;btn.textContent='Resend code';}
+      else btn.textContent=`Resend code in ${left}s`;
+    },1000);
+  }
+  async function rsSendCode(isResend=false){
+    if(rsBusy)return;
+    const client=supabaseClient();
+    const email=($('#rsEmail')?.value||'').trim().toLowerCase();
+    if(!client){rsMsg(navigator.onLine&&window.supabase?'SEWZA could not connect to Supabase.':`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){rsMsg('Enter the email address you signed up with.',true);$('#rsEmail')?.focus();return;}
+    if(!navigator.onLine){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    rsBusy=true;
+    const btn=$('#rsSendBtn'); const old=btn?btn.innerHTML:'';
+    if(btn&&!isResend){btn.disabled=true;btn.innerHTML='Sending your code…';}
+    rsMsg(isResend?'Sending a new code…':'');
     try{
-      const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:window.location.href});
-      if(error){setAuthMessage(friendlyAuthError(error),true);return;}
-      setAuthMessage('Password reset instructions have been sent to your email.',false);
+      const {error}=await client.auth.resetPasswordForEmail(email);
+      if(error)throw error;
+      rsEmailValue=email;
+      $('#rsSentTo').textContent=email;
+      rsBuildCode(rsLen);
+      rsShowStep(2);
+      rsCooldown();
+      rsMsg(isResend?'A new code is on its way.':'Code sent. It can take a minute to arrive.',false);
+      setTimeout(()=>$$('#rsCode input')[0]?.focus(),200);
     }catch(error){
       console.error('SEWZA password reset error:',error);
-      setAuthMessage(friendlyAuthError(error),true);
+      rsMsg(rsFriendly(error),true);
+    }finally{
+      rsBusy=false;
+      if(btn){btn.disabled=false;btn.innerHTML=old;}
     }
+  }
+
+  // --- code boxes ---
+  function rsBuildCode(n){
+    const wrap=$('#rsCode'); if(!wrap)return;
+    rsLen=Math.max(6,Math.min(10,n));
+    wrap.style.setProperty('--n',rsLen);
+    wrap.innerHTML='';
+    for(let i=0;i<rsLen;i++){
+      const inp=document.createElement('input');
+      inp.type='text'; inp.inputMode='numeric'; inp.maxLength=1; inp.pattern='[0-9]*';
+      inp.autocomplete=i===0?'one-time-code':'off';
+      inp.setAttribute('aria-label',`Digit ${i+1}`);
+      inp.style.setProperty('--i',i);
+      wrap.appendChild(inp);
+    }
+  }
+  function rsCodeValue(){ return $$('#rsCode input').map(i=>i.value).join(''); }
+  function rsCodeFill(digits){
+    const d=String(digits||'').replace(/\D/g,'').slice(0,10);
+    if(d.length>rsLen) rsBuildCode(d.length);
+    const boxes=$$('#rsCode input');
+    boxes.forEach((b,i)=>{b.value=d[i]||'';b.classList.toggle('filled',!!b.value);});
+    const next=Math.min(d.length,boxes.length-1);
+    boxes[next]?.focus();
+    return d;
+  }
+  function rsBindCode(){
+    const wrap=$('#rsCode'); if(!wrap)return;
+    wrap.addEventListener('input',e=>{
+      const t=e.target; if(!(t instanceof HTMLInputElement))return;
+      const boxes=$$('#rsCode input'); const i=boxes.indexOf(t);
+      const v=t.value.replace(/\D/g,'');
+      if(v.length>1){ // autofill from the keyboard / SMS-style suggestion
+        rsCodeFill(v); rsMaybeAuto(); return;
+      }
+      t.value=v; t.classList.toggle('filled',!!v);
+      wrap.classList.remove('rs-bad');
+      if(v&&i<boxes.length-1)boxes[i+1].focus();
+      rsMaybeAuto();
+    });
+    wrap.addEventListener('keydown',e=>{
+      const t=e.target; if(!(t instanceof HTMLInputElement))return;
+      const boxes=$$('#rsCode input'); const i=boxes.indexOf(t);
+      if(e.key==='Backspace'&&!t.value&&i>0){boxes[i-1].value='';boxes[i-1].classList.remove('filled');boxes[i-1].focus();e.preventDefault();}
+      else if(e.key==='ArrowLeft'&&i>0){boxes[i-1].focus();e.preventDefault();}
+      else if(e.key==='ArrowRight'&&i<boxes.length-1){boxes[i+1].focus();e.preventDefault();}
+    });
+    wrap.addEventListener('paste',e=>{
+      const txt=(e.clipboardData||window.clipboardData)?.getData('text')||'';
+      if(!/\d/.test(txt))return;
+      e.preventDefault(); rsCodeFill(txt); rsMaybeAuto();
+    });
+    wrap.addEventListener('focusin',e=>{ if(e.target instanceof HTMLInputElement)e.target.select(); });
+  }
+  let rsAutoTimer=null;
+  function rsMaybeAuto(){
+    clearTimeout(rsAutoTimer);
+    if(rsCodeValue().length===rsLen) rsAutoTimer=setTimeout(()=>rsVerify(),250);
+  }
+  async function rsVerify(){
+    if(rsBusy)return;
+    const client=supabaseClient(); const code=rsCodeValue();
+    if(!client){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    if(code.length<rsLen){rsMsg(`Enter all ${rsLen} digits of your code.`,true);$$('#rsCode input').find(i=>!i.value)?.focus();return;}
+    if(!navigator.onLine){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    rsBusy=true; rsHold=true;
+    const btn=$('#rsVerifyBtn'); const old=btn?btn.innerHTML:'';
+    if(btn){btn.disabled=true;btn.innerHTML='Checking your code…';}
+    rsMsg('');
+    try{
+      const {data,error}=await client.auth.verifyOtp({email:rsEmailValue,token:code,type:'recovery'});
+      if(error)throw error;
+      if(!data?.session)throw new Error('The code could not be confirmed. Please try again.');
+      $('#rsCode')?.classList.add('rs-ok');
+      await new Promise(r=>setTimeout(r,450));
+      rsShowStep(3);
+      setTimeout(()=>$('#rsNewPass')?.focus(),200);
+    }catch(error){
+      rsHold=false;
+      console.error('SEWZA code verification error:',error);
+      const w=$('#rsCode'); if(w){w.classList.remove('rs-bad');void w.offsetWidth;w.classList.add('rs-bad');}
+      $$('#rsCode input').forEach(i=>{i.value='';i.classList.remove('filled');});
+      $$('#rsCode input')[0]?.focus();
+      rsMsg(rsFriendly(error),true);
+    }finally{
+      rsBusy=false;
+      if(btn){btn.disabled=false;btn.innerHTML=old;}
+    }
+  }
+
+  // --- new password ---
+  function rsMeter(pw){
+    const m=$('#rsMeter'),t=$('#rsMeterText'); if(!m||!t)return;
+    let score=0;
+    if(pw.length>=6)score++;
+    if(pw.length>=9)score++;
+    if(/[a-z]/.test(pw)&&/[A-Z]/.test(pw))score++;
+    if(/\d/.test(pw)&&/[^A-Za-z0-9]/.test(pw)||pw.length>=12)score++;
+    if(!pw)score=0;
+    else if(pw.length<6)score=1;
+    m.dataset.level=String(score);
+    t.textContent=['Enter a password','Too short or weak','Okay','Good','Strong'][pw&&pw.length<6?1:score]||'';
+    if(pw&&pw.length<6)t.textContent='Too short — use at least 6 characters';
+  }
+  function rsMatchCheck(){
+    const a=$('#rsNewPass')?.value||'',b=$('#rsNewPass2')?.value||'',el=$('#rsMatch'); if(!el)return true;
+    if(!b){el.textContent='';el.className='rs-match';return false;}
+    const ok=a===b;
+    el.textContent=ok?'✓ Passwords match':'Passwords do not match yet';
+    el.className='rs-match '+(ok?'ok':'bad');
+    return ok;
+  }
+  async function rsSavePassword(){
+    if(rsBusy)return;
+    const client=supabaseClient();
+    const a=$('#rsNewPass')?.value||'',b=$('#rsNewPass2')?.value||'';
+    if(!client){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    if(a.length<6){rsMsg('Your password must be at least 6 characters.',true);$('#rsNewPass')?.focus();return;}
+    if(a!==b){rsMsg('The two passwords do not match.',true);$('#rsNewPass2')?.focus();return;}
+    if(!navigator.onLine){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
+    rsBusy=true;
+    const btn=$('#rsSaveBtn'); const old=btn?btn.innerHTML:'';
+    if(btn){btn.disabled=true;btn.innerHTML='Saving…';}
+    rsMsg('');
+    try{
+      const {data,error}=await client.auth.updateUser({password:a});
+      if(error)throw error;
+      const user=data?.user||(await client.auth.getUser())?.data?.user;
+      if(!user)throw new Error('Your password was saved, but we could not open your session. Please sign in with your new password.');
+      rsShowStep(4);
+      await new Promise(r=>setTimeout(r,1700));
+      const profile=await getProfile(user)||await ensureProfile(user);
+      rsHold=false;
+      await activateUserSession(user,profile);
+      showToast('Password updated',`Welcome back. Opening ${profile?.business_name||'your workspace'}.`);
+      const card=$('#resetCard'),login=$('#loginForm');
+      if(card)card.hidden=true; if(login)login.hidden=false;
+      rsClearPass(); rsBuildCode(6); $('#loginForm')?.reset();
+    }catch(error){
+      console.error('SEWZA new password error:',error);
+      if(rsStep===4)rsShowStep(3);
+      rsMsg(rsFriendly(error),true);
+    }finally{
+      rsBusy=false;
+      if(btn){btn.disabled=false;btn.innerHTML=old;}
+    }
+  }
+
+  function bindPasswordReset(){
+    $('#forgotPasswordBtn')?.addEventListener('click',rsOpen);
+    $('#rsPane1')?.addEventListener('submit',e=>{e.preventDefault();rsSendCode(false);});
+    $('#rsPane2')?.addEventListener('submit',e=>{e.preventDefault();rsVerify();});
+    $('#rsPane3')?.addEventListener('submit',e=>{e.preventDefault();rsSavePassword();});
+    $('#rsResendBtn')?.addEventListener('click',()=>rsSendCode(true));
+    $('#rsChangeEmailBtn')?.addEventListener('click',()=>{clearInterval(rsTimer);rsTimer=null;rsBuildCode(rsLen);rsShowStep(1);$('#rsEmail')?.focus();});
+    $('#rsBackBtn')?.addEventListener('click',rsClose);
+    $('#rsNewPass')?.addEventListener('input',e=>{rsMeter(e.target.value);rsMatchCheck();});
+    $('#rsNewPass2')?.addEventListener('input',rsMatchCheck);
+    $$('[data-rs-show]').forEach(b=>b.addEventListener('click',()=>{
+      const i=document.getElementById(b.dataset.rsShow); if(!i)return;
+      i.type=i.type==='password'?'text':'password'; b.textContent=i.type==='password'?'Show':'Hide';
+    }));
+    rsBindCode();
   }
 
   async function signOut(){
@@ -1031,6 +1283,7 @@
 
     client.auth.onAuthStateChange(async (event,session)=>{
       if(event==='SIGNED_IN'&&session?.user){
+        if(rsHold) return; // password reset in progress: stay on the reset page until a new password is saved
         if(currentUser?.id===session.user.id){ quietCloudRefresh(); return; }
         await activateUserSession(session.user);
       }
@@ -1684,7 +1937,7 @@
     $('#loginForm')?.addEventListener('submit',handleAuthSubmit);
     $('#authToggleBtn')?.addEventListener('click',()=>setAuthMode($('#signupFields')?.hidden));
     $('#showPass')?.addEventListener('click',()=>{const i=$('#loginPassword');i.type=i.type==='password'?'text':'password';$('#showPass').textContent=i.type==='password'?'Show':'Hide';});
-    $('#forgotPasswordBtn')?.addEventListener('click',handleForgotPassword);
+    bindPasswordReset();
     $('#themeQuickBtn')?.addEventListener('click',()=>showView('themes')); $('#profileBtn')?.addEventListener('click',()=>{renderAccountPanel();showView('account');}); $('#signOutBtn')?.addEventListener('click',signOut); $('#saveAccountBtn')?.addEventListener('click',async()=>{try{await saveProfileSettings();}catch(e){console.error(e);if(isNetworkError(e))showToast(INTERNET_FAILED,INTERNET_FAILED_HELP);else showToast('Could not save profile','Check your Supabase Storage bucket and RLS policies.');}}); $('#accountAvatarInput')?.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;if(f.size>5*1024*1024){showToast('Image too large','Choose a profile photo under 5MB.');e.target.value='';return;}const r=new FileReader();r.onload=ev=>{avatarRemoveRequested=false;const x=$('#accountAvatarPreview');x.style.backgroundImage=`url("${ev.target.result}")`;x.textContent='';x.classList.add('has-photo');};r.readAsDataURL(f);});
     { // Optional profile picture: "Remove picture" appears only while a picture is shown.
       const avatarBox=$('#accountAvatarPreview'), removeAvatarBtn=$('#removeAvatarBtn');

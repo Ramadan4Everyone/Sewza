@@ -196,7 +196,7 @@
          </label>
 
          <label>
-          Password
+          <span id="passLabelText">Password</span>
           <div class="password-wrap">
            <input id="loginPassword" required type="password" autocomplete="current-password" minlength="6" placeholder="Enter your password"/>
            <button class="show-pass" id="showPass" type="button" aria-label="Show password">Show</button>
@@ -235,6 +235,103 @@
          <span>☁ Your workspace</span>
         </div>
        </form>
+
+       <!-- PASSWORD RESET: email -> 6-digit code -> new password -->
+       <div class="auth-card rs-card" id="resetCard" hidden aria-live="polite">
+        <span class="rs-orb rs-orb-a" aria-hidden="true"></span><span class="rs-orb rs-orb-b" aria-hidden="true"></span>
+        <div class="auth-brand">
+         <div class="auth-logo">S</div>
+         <div class="auth-brand-copy"><strong>SEWZA</strong><span>Account recovery</span></div>
+        </div>
+
+        <ol class="rs-steps" id="rsSteps" data-step="1" aria-label="Reset progress">
+         <li class="rs-dot" data-n="1"><i>1</i><span>Email</span></li>
+         <li class="rs-dot" data-n="2"><i>2</i><span>Code</span></li>
+         <li class="rs-dot" data-n="3"><i>3</i><span>New password</span></li>
+         <li class="rs-track" aria-hidden="true"><b></b></li>
+        </ol>
+
+        <!-- Step 1: email -->
+        <form class="rs-pane" id="rsPane1" data-step="1" novalidate>
+         <div class="rs-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><rect x="8" y="16" width="48" height="34" rx="7"/><path d="M10 20l22 17 22-17"/></svg>
+          <em></em><em></em>
+         </div>
+         <div class="auth-heading">
+          <p class="eyebrow">FORGOT PASSWORD</p>
+          <h2>Let’s get you back in</h2>
+          <p class="muted">Enter the email you signed up with and we’ll send a secret code to your inbox.</p>
+         </div>
+         <label class="rs-field">Email
+          <input id="rsEmail" type="email" autocomplete="email" placeholder="you@example.com" required/>
+         </label>
+         <button class="primary-btn full auth-submit" id="rsSendBtn" type="submit">Send my code <span>→</span></button>
+        </form>
+
+        <!-- Step 2: code -->
+        <form class="rs-pane" id="rsPane2" data-step="2" novalidate hidden>
+         <div class="rs-icon rs-icon-shield" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M32 8l20 7v15c0 14-9 23-20 27C21 53 12 44 12 30V15z"/><path d="M23 32l7 7 12-14"/></svg>
+          <em></em><em></em>
+         </div>
+         <div class="auth-heading">
+          <p class="eyebrow">CHECK YOUR INBOX</p>
+          <h2>Enter your code</h2>
+          <p class="muted">We sent a code to <b id="rsSentTo" class="rs-mail">your email</b>. Type it below.</p>
+         </div>
+         <div class="rs-code" id="rsCode" role="group" aria-label="Verification code"></div>
+         <p class="rs-hint">Can’t see it? Check your spam or promotions folder.</p>
+         <button class="primary-btn full auth-submit" id="rsVerifyBtn" type="submit">Verify code <span>→</span></button>
+         <div class="rs-links">
+          <button class="rs-link" id="rsResendBtn" type="button" disabled>Resend code</button>
+          <button class="rs-link" id="rsChangeEmailBtn" type="button">Use a different email</button>
+         </div>
+        </form>
+
+        <!-- Step 3: new password -->
+        <form class="rs-pane" id="rsPane3" data-step="3" novalidate hidden>
+         <div class="rs-icon rs-icon-key" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><rect x="14" y="28" width="36" height="26" rx="6"/><path d="M22 28v-7a10 10 0 0120 0v7"/><circle cx="32" cy="41" r="3.5"/></svg>
+          <em></em><em></em>
+         </div>
+         <div class="auth-heading">
+          <p class="eyebrow">CODE VERIFIED ✓</p>
+          <h2>Create a new password</h2>
+          <p class="muted">Choose something strong that you’ll remember.</p>
+         </div>
+         <label class="rs-field">New password
+          <div class="password-wrap">
+           <input id="rsNewPass" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters" required/>
+           <button class="show-pass" type="button" data-rs-show="rsNewPass" aria-label="Show password">Show</button>
+          </div>
+         </label>
+         <div class="rs-meter" id="rsMeter" data-level="0"><i></i><i></i><i></i><i></i><span id="rsMeterText">Enter a password</span></div>
+         <label class="rs-field">Confirm new password
+          <div class="password-wrap">
+           <input id="rsNewPass2" type="password" autocomplete="new-password" minlength="6" placeholder="Type it again" required/>
+           <button class="show-pass" type="button" data-rs-show="rsNewPass2" aria-label="Show password">Show</button>
+          </div>
+         </label>
+         <p class="rs-match" id="rsMatch"></p>
+         <button class="primary-btn full auth-submit" id="rsSaveBtn" type="submit">Save new password <span>→</span></button>
+        </form>
+
+        <!-- Step 4: done -->
+        <div class="rs-pane rs-done" id="rsPane4" data-step="4" hidden>
+         <div class="rs-check" aria-hidden="true">
+          <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="34"/><path d="M26 41l10 10 19-22"/></svg>
+          <em></em><em></em><em></em><em></em><em></em><em></em>
+         </div>
+         <div class="auth-heading">
+          <p class="eyebrow">ALL DONE</p>
+          <h2>Password updated</h2>
+          <p class="muted">Welcome back. Opening your SEWZA workspace…</p>
+         </div>
+        </div>
+
+        <div class="auth-error" id="rsMessage" role="status" aria-live="polite"></div>
+        <button class="forgot-btn rs-back" id="rsBackBtn" type="button">← Back to sign in</button>
+       </div>
       </div>
      </section>
      <!-- DASHBOARD -->

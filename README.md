@@ -178,3 +178,13 @@ Offline mode is designed for an already signed-in user. A brand-new user cannot 
 **Settings (Profile → Your tailor portfolio)**
 - Setup progress ring with tap-to-fix steps, and five tabs: Profile, Look & feel (colours, heading style, hero photo, slideshow, announcement, chat button, sections, live preview), Work photos (★ to feature in the slideshow), Services & info (services, FAQ, hours, map) and Reviews (approve / hide / reply / delete, plus a WhatsApp button to ask customers for reviews: `portfolio.html?t=your-link#review`).
 - `CACHE_NAME` in `sw.js` is now `sewza-pwa-v13`.
+
+## v15: Forgot password with a Gmail code
+
+"Forgot your password?" now opens a SEWZA recovery page: email, then a code sent to the inbox, then a new password. Sign-up also now labels the field "Create password".
+
+**One-time Supabase step (required for the code to arrive):**
+1. Supabase Dashboard, Authentication, Emails (Templates), **Reset Password**.
+2. Paste in `SUPABASE_RESET_EMAIL_TEMPLATE.html` (it contains `{{ .Token }}`). The default template only contains a link, so no code is sent until this is done.
+3. Optional: Authentication, Providers, Email, set "Email OTP Length" (6 by default; the page accepts 6 to 10 digits) and "Email OTP Expiration".
+4. For a reliable inbox delivery to many users, set up custom SMTP (Authentication, SMTP Settings). The built-in Supabase mailer is rate limited.

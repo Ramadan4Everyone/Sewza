@@ -1,0 +1,25 @@
+<!-- SEWZA "Reset Password" email. Paste into:
+     Supabase Dashboard -> Authentication -> Emails -> Templates -> "Reset Password"
+     Subject suggestion: Your SEWZA password reset code
+     The {{ .Token }} placeholder is what sends the code. Keep it exactly as written. -->
+<div style="margin:0;padding:32px 16px;background:#f1f6f3;font-family:Helvetica,Arial,sans-serif;">
+  <table role="presentation" align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:22px;overflow:hidden;border:1px solid #e3ece7;">
+    <tr><td style="background:#064e3b;padding:26px 28px;text-align:left;">
+      <span style="display:inline-block;width:40px;height:40px;line-height:40px;text-align:center;border-radius:12px;background:#d4af37;color:#1b1409;font:700 20px Georgia,serif;">S</span>
+      <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:.6px;margin-left:10px;vertical-align:middle;">SEWZA</span>
+    </td></tr>
+    <tr><td style="padding:32px 28px 8px;">
+      <p style="margin:0 0 8px;color:#b8922a;font-size:12px;font-weight:700;letter-spacing:2px;">PASSWORD RESET</p>
+      <h1 style="margin:0 0 12px;font:700 26px Georgia,serif;color:#15231d;">Here is your code</h1>
+      <p style="margin:0;color:#5f7068;font-size:15px;line-height:1.7;">Enter this code on the SEWZA reset page to choose a new password.</p>
+    </td></tr>
+    <tr><td style="padding:18px 28px;" align="center">
+      <div style="background:#f7faf8;border:1px dashed #d4af37;border-radius:16px;padding:20px 10px;font:700 36px 'Courier New',monospace;letter-spacing:10px;color:#064e3b;text-align:center;">{{ .Token }}</div>
+    </td></tr>
+    <tr><td style="padding:0 28px 30px;">
+      <p style="margin:0 0 8px;color:#5f7068;font-size:13px;line-height:1.7;">This code expires soon and works only once. Never share it with anyone, SEWZA will never ask you for it.</p>
+      <p style="margin:0;color:#8a978f;font-size:13px;line-height:1.7;">Didn&rsquo;t ask for this? You can safely ignore this email. Your password will not change.</p>
+    </td></tr>
+    <tr><td style="background:#f7faf8;padding:16px 28px;text-align:center;color:#8a978f;font-size:12px;">SEWZA &middot; The Digital Measurement Book</td></tr>
+  </table>
+</div>
