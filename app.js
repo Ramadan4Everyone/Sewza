@@ -1009,6 +1009,8 @@
     login.hidden=true; card.hidden=false;
     rsBuildCode(6); rsClearPass(); rsShowStep(1);
     setTimeout(()=>$('#rsEmail')?.focus(),150);
+    // Email already typed on the sign-in page: send the code right away and go straight to the code page.
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsEmailValue)) rsSendCode(false);
   }
   async function rsClose(){
     const client=supabaseClient();

@@ -152,7 +152,19 @@
   // Service worker (offline support + installability).
   window.addEventListener('load', function () {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(function (err) { console.warn('SEWZA service worker:', err); });
+      // When a new version of SEWZA takes over, refresh once if the sign-in page is showing,
+      // so people never keep seeing an old copy of the page (e.g. an old forgot-password screen).
+      var hadController = !!navigator.serviceWorker.controller;
+      var reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!hadController || reloaded) { hadController = true; return; }
+        var login = document.getElementById('view-login');
+        var busy = document.getElementById('resetCard') && !document.getElementById('resetCard').hidden;
+        if (login && login.classList.contains('active') && !busy) { reloaded = true; window.location.reload(); }
+      });
+      navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        if (reg && reg.update) reg.update().catch(function () {});
+      }).catch(function (err) { console.warn('SEWZA service worker:', err); });
     }
   });
 })();

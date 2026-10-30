@@ -188,3 +188,8 @@ Offline mode is designed for an already signed-in user. A brand-new user cannot 
 2. Paste in `SUPABASE_RESET_EMAIL_TEMPLATE.html` (it contains `{{ .Token }}`). The default template only contains a link, so no code is sent until this is done.
 3. Optional: Authentication, Providers, Email, set "Email OTP Length" (6 by default; the page accepts 6 to 10 digits) and "Email OTP Expiration".
 4. For a reliable inbox delivery to many users, set up custom SMTP (Authentication, SMTP Settings). The built-in Supabase mailer is rate limited.
+
+## v16: forgot-password page always shows
+
+- Typing your email on the sign-in page and tapping "Forgot your password?" now sends the code and opens the code page automatically.
+- New versions of SEWZA now replace the old cached copy on their own (sw.js cache v15 plus an automatic refresh on the sign-in page). Before this, a device could keep showing the old forgot-password message for one extra visit.
