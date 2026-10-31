@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sewza-pwa-v15';
+const CACHE_NAME = 'sewza-pwa-v16';
 const RUNTIME_CACHE = 'sewza-runtime-v1';
 const SUPABASE_LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const APP_SHELL = [

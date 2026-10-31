@@ -970,7 +970,8 @@
   // Password reset with a code: email -> code from Gmail -> new password
   // =====================================================================
   let rsHold=false;           // true from "code verified" until the new password is saved or cancelled
-  let rsStep=1, rsLen=6, rsTimer=null, rsBusy=false, rsEmailValue='';
+  const RS_DEFAULT_LEN=8;      // digits in the email code (Supabase "Email OTP Length" is 8 for this project)
+  let rsStep=1, rsLen=RS_DEFAULT_LEN, rsTimer=null, rsBusy=false, rsEmailValue='';
   const RS_COOLDOWN=60;
 
   function rsMsg(text='',isError=false){
@@ -1007,7 +1008,7 @@
     rsEmailValue=($('#loginEmail')?.value||'').trim().toLowerCase();
     $('#rsEmail').value=rsEmailValue;
     login.hidden=true; card.hidden=false;
-    rsBuildCode(6); rsClearPass(); rsShowStep(1);
+    rsBuildCode(RS_DEFAULT_LEN); rsClearPass(); rsShowStep(1);
     setTimeout(()=>$('#rsEmail')?.focus(),150);
     // Email already typed on the sign-in page: send the code right away and go straight to the code page.
     if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rsEmailValue)) rsSendCode(false);
@@ -1131,7 +1132,7 @@
     if(rsBusy)return;
     const client=supabaseClient(); const code=rsCodeValue();
     if(!client){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
-    if(code.length<rsLen){rsMsg(`Enter all ${rsLen} digits of your code.`,true);$$('#rsCode input').find(i=>!i.value)?.focus();return;}
+    if(code.length<6){rsMsg(`Enter all ${rsLen} digits of your code.`,true);$$('#rsCode input').find(i=>!i.value)?.focus();return;}
     if(!navigator.onLine){rsMsg(`${INTERNET_FAILED}. ${INTERNET_FAILED_HELP}`,true);return;}
     rsBusy=true; rsHold=true;
     const btn=$('#rsVerifyBtn'); const old=btn?btn.innerHTML:'';
@@ -1205,7 +1206,7 @@
       showToast('Password updated',`Welcome back. Opening ${profile?.business_name||'your workspace'}.`);
       const card=$('#resetCard'),login=$('#loginForm');
       if(card)card.hidden=true; if(login)login.hidden=false;
-      rsClearPass(); rsBuildCode(6); $('#loginForm')?.reset();
+      rsClearPass(); rsBuildCode(RS_DEFAULT_LEN); $('#loginForm')?.reset();
     }catch(error){
       console.error('SEWZA new password error:',error);
       if(rsStep===4)rsShowStep(3);
